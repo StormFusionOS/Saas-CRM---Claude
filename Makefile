@@ -10,7 +10,7 @@
 #   make docker-down       - Stop Docker services
 # ==============================================================================
 
-.PHONY: help setup test test-crm test-ops test-frontend lint clean docker-up docker-down migrate
+.PHONY: help setup test test-crm test-ops test-frontend lint clean docker-up docker-down migrate dev dev-stop checks checks-fast seed seed-crm seed-ops seed-clear
 
 # Default target
 .DEFAULT_GOAL := help
@@ -179,6 +179,16 @@ docker-clean: ## Remove Docker volumes and clean up
 # DEVELOPMENT SERVERS
 # ==============================================================================
 
+dev: ## Start entire development environment (recommended)
+	@echo "$(GREEN)Starting development environment...$(NC)"
+	@chmod +x scripts/dev.sh
+	@./scripts/dev.sh
+
+dev-stop: ## Stop development environment
+	@echo "$(YELLOW)Stopping development environment...$(NC)"
+	@chmod +x scripts/dev.sh
+	@./scripts/dev.sh --stop
+
 run-crm-api: ## Run CRM API locally (dev mode)
 	@echo "$(GREEN)Starting CRM API on http://localhost:8000$(NC)"
 	@cd crm_api && python -m app.main
@@ -236,10 +246,32 @@ check-env: ## Verify .env file exists
 		echo "$(GREEN)✓ .env file exists$(NC)"; \
 	fi
 
-seed-data: ## Seed development databases with test data
+checks: ## Run all quality checks (tests, coverage, security)
+	@echo "$(GREEN)Running all quality checks...$(NC)"
+	@chmod +x scripts/checks.sh
+	@./scripts/checks.sh
+
+checks-fast: ## Run fast quality checks (skip slower validations)
+	@echo "$(GREEN)Running fast quality checks...$(NC)"
+	@chmod +x scripts/checks.sh
+	@./scripts/checks.sh --fast
+
+seed: ## Seed development databases with demo data
 	@echo "$(YELLOW)Seeding databases...$(NC)"
-	@python tools/seed_data.py
+	@python scripts/seed.py
 	@echo "$(GREEN)✓ Database seeded$(NC)"
+
+seed-crm: ## Seed CRM database only
+	@echo "$(YELLOW)Seeding CRM database...$(NC)"
+	@python scripts/seed.py --crm
+
+seed-ops: ## Seed Ops database only
+	@echo "$(YELLOW)Seeding Ops database...$(NC)"
+	@python scripts/seed.py --ops
+
+seed-clear: ## Clear all seeded data
+	@echo "$(YELLOW)Clearing all seeded data...$(NC)"
+	@python scripts/seed.py --clear
 
 # ==============================================================================
 # DOCUMENTATION
@@ -253,5 +285,5 @@ docs: ## Generate API documentation
 # CI/CD
 # ==============================================================================
 
-ci: lint test ## Run CI pipeline (lint + test)
+ci: checks ## Run CI pipeline (all quality checks)
 	@echo "$(GREEN)✓ CI pipeline passed$(NC)"

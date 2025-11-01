@@ -4,7 +4,7 @@ import { useAuth } from '../lib/auth-context';
 import { authAPI } from '../lib/api';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('sales@example.com');
+  const [email, setEmail] = useState('Nathan@RiverCityClean.com');
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const { login } = useAuth();

@@ -11,7 +11,7 @@ from datetime import datetime
 def test_login_success(db):
     """Test successful login with valid credentials."""
     request = LoginRequest(
-        email="sales@example.com",
+        email="Nathan@RiverCityClean.com",
         password="password123"
     )
 
@@ -23,7 +23,7 @@ def test_login_success(db):
 
     # Verify token can be decoded
     claims = verify_token(result.access_token)
-    assert claims["sub"] == "sales@example.com"
+    assert claims["sub"] == "Nathan@RiverCityClean.com"
     assert "SALES" in claims["roles"]
 
 
@@ -43,7 +43,7 @@ def test_login_invalid_email(db):
 def test_login_invalid_password(db):
     """Test login with incorrect password."""
     request = LoginRequest(
-        email="sales@example.com",
+        email="Nathan@RiverCityClean.com",
         password="wrongpassword"
     )
 
@@ -104,7 +104,7 @@ def test_token_expiration():
 def test_multiple_roles(db):
     """Test login with user having multiple roles."""
     request = LoginRequest(
-        email="owner@example.com",
+        email="owner@rivercityclean.com",
         password="password123"
     )
 

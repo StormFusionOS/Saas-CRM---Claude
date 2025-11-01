@@ -95,8 +95,13 @@ class OpsRoleGuard:
         self.required_roles = required_roles
 
     def __call__(self, claims: Dict[str, Any]) -> Dict[str, Any]:
-        """Verify user has required role."""
+        """Verify user has required role. OWNER has universal access."""
         user_roles = claims.get("roles", [])
+
+        # OWNER has universal access
+        if OpsRole.OWNER.value in user_roles:
+            return claims
+
         required_role_strs = [r.value for r in self.required_roles]
 
         if not any(role in required_role_strs for role in user_roles):

@@ -19,7 +19,7 @@ class FacebookLeadPayload(BaseModel):
                         if change.get("field") == "leadgen":
                             leadgen_data = change.get("value", {})
                             return {
-                                "lead_id": leadgen_data.get("leadgen_id"),
+                                "leadgen_id": leadgen_data.get("leadgen_id"),
                                 "form_id": leadgen_data.get("form_id"),
                                 "page_id": leadgen_data.get("page_id"),
                                 "created_time": leadgen_data.get("created_time"),

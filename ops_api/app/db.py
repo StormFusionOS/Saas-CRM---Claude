@@ -113,9 +113,9 @@ def init_demo_data():
 
     _users.clear()
     _users.extend([
-        User(1, "devops@example.com", hash_password("password123"), "DevOps Engineer", [OpsRole.DEVOPS.value], True),
-        User(2, "seo@example.com", hash_password("password123"), "SEO Engineer", [OpsRole.SEO_ENGINEER.value], True),
-        User(3, "owner@example.com", hash_password("password123"), "Owner", [OpsRole.OWNER.value], True),
+        User(1, "Nathan@RiverCityClean.com", hash_password("password123"), "Nathan - DevOps", [OpsRole.DEVOPS.value], True),
+        User(2, "seo@rivercityclean.com", hash_password("password123"), "SEO Engineer", [OpsRole.SEO_ENGINEER.value], True),
+        User(3, "owner@rivercityclean.com", hash_password("password123"), "Owner", [OpsRole.OWNER.value], True),
     ])
 
 

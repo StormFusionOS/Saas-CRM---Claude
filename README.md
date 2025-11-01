@@ -1,6 +1,13 @@
 # Production-Ready Monorepo: CRM + Ops Console
 
+[![Python Backend CI](https://github.com/StormFusionOS/Saas-CRM---Claude/actions/workflows/python.yml/badge.svg)](https://github.com/StormFusionOS/Saas-CRM---Claude/actions/workflows/python.yml)
+[![Frontend CI](https://github.com/StormFusionOS/Saas-CRM---Claude/actions/workflows/node.yml/badge.svg)](https://github.com/StormFusionOS/Saas-CRM---Claude/actions/workflows/node.yml)
+[![Coverage: CRM](https://img.shields.io/badge/coverage%3A%20CRM-80%25-brightgreen)](./crm_api/htmlcov)
+[![Coverage: Ops](https://img.shields.io/badge/coverage%3A%20Ops-96%25-brightgreen)](./ops_api/htmlcov)
+
 A comprehensive, production-ready monorepo featuring two isolated applications with complete RBAC, secure JWT authentication, hardened Nginx reverse proxy, and offline-testable architecture.
+
+**📖 [View RUNBOOK.md](./RUNBOOK.md)** for detailed operational guidance, quickstart, and troubleshooting.
 
 ## 🏗️ Architecture Overview
 
@@ -114,86 +121,56 @@ All backends use **stub implementations** of FastAPI, Pydantic, Structlog, and C
 ### Prerequisites
 
 - **Python 3.11+**
-- **Node.js 18+** with npm
+- **Node.js 20+** with npm
 - **Docker & Docker Compose** (for databases)
 
-### 1. Initial Setup
+### One-Command Start (Recommended)
 
 ```bash
-# Clone repository and navigate to directory
-cd Saas-CRM---Claude
-
 # Copy environment template
 cp .env.example .env
 
-# Install dependencies and setup
-make setup
+# Start entire development environment
+./scripts/dev.sh
 ```
 
-### 2. Start Docker Services
+This automated script:
+- ✅ Validates prerequisites
+- ✅ Starts Docker (PostgreSQL + Redis)
+- ✅ Starts both APIs (CRM on :8000, Ops on :8001)
+- ✅ Starts both frontends (CRM on :5173, Ops on :5174)
+- ✅ Displays all URLs and credentials
 
+**Stop all services:**
 ```bash
-# Start PostgreSQL and Redis
-make docker-up
-
-# Verify services are running
-docker-compose ps
+./scripts/dev.sh --stop
 ```
 
-### 3. Run Backend Tests
+### Manual Setup (Alternative)
+
+If you prefer manual control, see [RUNBOOK.md](./RUNBOOK.md#method-2-manual) for step-by-step instructions.
+
+### Run Quality Checks
 
 ```bash
-# CRM API tests
-cd crm_api
-python -m pytest -v
+# Run all tests, coverage, and security checks
+./scripts/checks.sh
 
-# Ops API tests
-cd ../ops_api
-python -m pytest -v
-```
-
-### 4. Start Development Servers
-
-**Terminal 1 - CRM API:**
-```bash
-cd crm_api
-python -m app.main
-# Note: With stub FastAPI, this validates imports
-# In production: uvicorn app.main:app --reload --port 8000
-```
-
-**Terminal 2 - Ops API:**
-```bash
-cd ops_api
-python -m app.main
-# In production: uvicorn app.main:app --reload --port 8001
-```
-
-**Terminal 3 - CRM Frontend:**
-```bash
-cd crm
-npm install
-npm run dev
-# Opens on http://localhost:5173
-```
-
-**Terminal 4 - Ops Console:**
-```bash
-cd ops-console
-npm install
-npm run dev
-# Opens on http://localhost:5174
+# Seed demo data (5 contacts, 5 leads, alerts, health checks)
+python scripts/seed.py
 ```
 
 ### 5. Login & Test
 
 **CRM:** http://localhost:5173/login
-- **Email**: `sales@example.com`
+- **Email**: `Nathan@RiverCityClean.com`
 - **Password**: `password123`
 
 **Ops Console:** http://localhost:5174/login
-- **Email**: `devops@example.com`
+- **Email**: `DevOps@RiverCityClean.com`
 - **Password**: `password123`
+
+**All Demo Users**: See [RUNBOOK.md](./RUNBOOK.md#demo-credentials) for complete list
 
 ---
 
@@ -342,7 +319,7 @@ Update `/etc/hosts` for local testing:
 ```bash
 curl -X POST http://localhost:8000/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"sales@example.com","password":"password123"}'
+  -d '{"email":"Nathan@RiverCityClean.com","password":"password123"}'
 ```
 
 **Get Leads (with token):**

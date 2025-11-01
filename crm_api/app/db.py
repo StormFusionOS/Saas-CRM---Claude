@@ -193,16 +193,16 @@ def init_demo_data():
     demo_users = [
         User(
             id=1,
-            email="sales@example.com",
+            email="Nathan@RiverCityClean.com",
             hashed_password=hash_password("password123"),
-            full_name="Sales User",
+            full_name="Nathan - Sales",
             roles=[Role.SALES.value],
             is_active=True,
             created_at=datetime.utcnow(),
         ),
         User(
             id=2,
-            email="manager@example.com",
+            email="manager@rivercityclean.com",
             hashed_password=hash_password("password123"),
             full_name="Sales Manager",
             roles=[Role.SALES_MANAGER.value],
@@ -211,7 +211,7 @@ def init_demo_data():
         ),
         User(
             id=3,
-            email="owner@example.com",
+            email="owner@rivercityclean.com",
             hashed_password=hash_password("password123"),
             full_name="Owner",
             roles=[Role.OWNER.value],

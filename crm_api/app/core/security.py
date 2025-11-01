@@ -163,8 +163,12 @@ def check_role(required_roles: list[Role], user_roles: list[str]) -> bool:
         user_roles: List of user's roles
 
     Returns:
-        True if user has at least one required role
+        True if user has at least one required role or is OWNER (universal access)
     """
+    # OWNER has universal access
+    if Role.OWNER.value in user_roles:
+        return True
+
     required_role_strs = [r.value for r in required_roles]
     return any(role in required_role_strs for role in user_roles)
 

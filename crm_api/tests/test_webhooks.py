@@ -96,8 +96,11 @@ def test_ingest_lead_duplicate_contact(db):
     # Should reuse same contact
     assert result1["contact_id"] == result2["contact_id"]
 
-    # But create new lead
-    assert result1["lead_id"] != result2["lead_id"]
+    # Should reuse same lead (unless it's closed)
+    assert result1["lead_id"] == result2["lead_id"]
+
+    # But create new interactions
+    assert result1["interaction_id"] != result2["interaction_id"]
 
 
 def test_webhook_signature_verification():
