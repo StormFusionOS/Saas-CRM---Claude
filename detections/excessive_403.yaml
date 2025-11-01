@@ -1,0 +1,108 @@
+# Excessive 403 Forbidden Responses Detection
+#
+# Detects excessive 403 Forbidden responses from a user or IP,
+# indicating potential unauthorized access attempts or privilege
+# escalation reconnaissance.
+
+id: excessive_403
+name: Excessive 403 Forbidden Responses
+description: Multiple 403 responses indicating unauthorized access attempts
+severity: medium
+category: access_control
+references:
+  - https://attack.mitre.org/techniques/T1003/
+  - https://attack.mitre.org/tactics/TA0007/  # Discovery
+
+# Detection logic
+detection:
+  # Time window
+  timeframe: 10m  # 10 minutes
+
+  # Group by source
+  group_by:
+    - client.ip
+    - user.id
+
+  # Conditions
+  condition:
+    - field: http.response.status_code
+      operator: equals
+      value: 403
+
+    - field: event.action
+      operator: in
+      value:
+        - http.response
+        - access.denied
+
+  # Threshold
+  threshold:
+    count: 10  # 10 or more 403s
+    operator: gte
+
+# Alert configuration
+alert:
+  priority: medium
+  notify:
+    - security_team
+  tags:
+    - access_control
+    - reconnaissance
+    - privilege_escalation
+    - mitre_attack:t1003
+    - mitre_attack:ta0007
+
+# Response actions
+response:
+  - action: alert_siem
+  - action: create_incident
+    severity: medium
+  - action: rate_limit
+    target: client.ip
+    duration: 600  # 10 minutes
+
+# False positive filters
+exclude:
+  # Exclude automated scans from known sources
+  - field: user_agent
+    operator: contains
+    value:
+      - "health-check"
+      - "monitoring"
+
+  # Exclude specific paths that may legitimately trigger 403s
+  - field: http.request.path
+    operator: equals
+    value:
+      - /robots.txt
+      - /favicon.ico
+
+# Testing
+test_cases:
+  - name: trigger_excessive_403
+    description: 10 403s from same IP within 10 minutes
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin"}
+      - {"@timestamp": "2025-11-01T12:00:30Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/users"}
+      - {"@timestamp": "2025-11-01T12:01:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/settings"}
+      - {"@timestamp": "2025-11-01T12:01:30Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/api/admin/logs"}
+      - {"@timestamp": "2025-11-01T12:02:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/api/admin/keys"}
+      - {"@timestamp": "2025-11-01T12:02:30Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/database"}
+      - {"@timestamp": "2025-11-01T12:03:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/config"}
+      - {"@timestamp": "2025-11-01T12:03:30Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/backup"}
+      - {"@timestamp": "2025-11-01T12:04:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/secrets"}
+      - {"@timestamp": "2025-11-01T12:04:30Z", "http.response.status_code": 403, "client.ip": "203.0.113.50", "http.request.path": "/admin/tokens"}
+    expected: true
+
+  - name: normal_403
+    description: Few 403s should not trigger
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.60", "http.request.path": "/admin"}
+      - {"@timestamp": "2025-11-01T12:01:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.60", "http.request.path": "/admin/users"}
+    expected: false
+
+  - name: exclude_monitoring
+    description: Health checks should be excluded
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "http.response.status_code": 403, "client.ip": "203.0.113.70", "user_agent": "health-check-bot"}
+    expected: false

@@ -1,0 +1,90 @@
+# Brute Force Authentication Detection
+#
+# Detects multiple failed login attempts from the same source IP
+# within a short time window, indicating potential brute force attack.
+
+id: brute_force_auth
+name: Brute Force Authentication Attack
+description: Multiple failed login attempts from single source IP
+severity: high
+category: authentication
+references:
+  - https://owasp.org/www-community/attacks/Brute_force_attack
+  - https://attack.mitre.org/techniques/T1110/
+
+# Detection logic
+detection:
+  # Time window for aggregation
+  timeframe: 5m  # 5 minutes
+
+  # Field to group by
+  group_by:
+    - client.ip
+
+  # Conditions
+  condition:
+    - field: event.action
+      operator: equals
+      value: auth.login.failure
+
+    - field: http.response.status_code
+      operator: equals
+      value: 401
+
+  # Threshold
+  threshold:
+    count: 5  # 5 or more failed attempts
+    operator: gte
+
+# Alert configuration
+alert:
+  priority: high
+  notify:
+    - security_team
+  tags:
+    - brute_force
+    - authentication
+    - mitre_attack:t1110
+
+# Response actions
+response:
+  - action: block_ip
+    duration: 3600  # 1 hour
+  - action: alert_siem
+  - action: create_incident
+    severity: high
+
+# False positive filters
+exclude:
+  # Exclude known scanners (if configured)
+  - field: client.ip
+    operator: in
+    value:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16  # Internal IPs
+
+# Testing
+test_cases:
+  - name: trigger_brute_force
+    description: 5 failed logins from same IP within 5 minutes
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "event.action": "auth.login.failure", "client.ip": "203.0.113.1", "http.response.status_code": 401}
+      - {"@timestamp": "2025-11-01T12:00:30Z", "event.action": "auth.login.failure", "client.ip": "203.0.113.1", "http.response.status_code": 401}
+      - {"@timestamp": "2025-11-01T12:01:00Z", "event.action": "auth.login.failure", "client.ip": "203.0.113.1", "http.response.status_code": 401}
+      - {"@timestamp": "2025-11-01T12:01:30Z", "event.action": "auth.login.failure", "client.ip": "203.0.113.1", "http.response.status_code": 401}
+      - {"@timestamp": "2025-11-01T12:02:00Z", "event.action": "auth.login.failure", "client.ip": "203.0.113.1", "http.response.status_code": 401}
+    expected: true
+
+  - name: normal_failed_login
+    description: Single failed login (below threshold)
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "event.action": "auth.login.failure", "client.ip": "203.0.113.2", "http.response.status_code": 401}
+    expected: false
+
+  - name: successful_logins
+    description: Successful logins should not trigger
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "event.action": "auth.login.success", "client.ip": "203.0.113.3", "http.response.status_code": 200}
+      - {"@timestamp": "2025-11-01T12:00:30Z", "event.action": "auth.login.success", "client.ip": "203.0.113.3", "http.response.status_code": 200}
+    expected: false

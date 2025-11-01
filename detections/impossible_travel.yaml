@@ -1,0 +1,72 @@
+# Impossible Travel Detection
+#
+# Detects when a user authenticates from two geographically distant
+# locations within an impossible timeframe, indicating potential
+# account compromise or credential sharing.
+
+id: impossible_travel
+name: Impossible Travel Detection
+description: User authentication from distant locations in short time
+severity: critical
+category: authentication
+references:
+  - https://attack.mitre.org/techniques/T1078/
+  - https://docs.microsoft.com/en-us/azure/active-directory/identity-protection/concept-identity-protection-risks
+
+# Detection logic
+detection:
+  # Time window
+  timeframe: 1h  # 1 hour
+
+  # Group by user
+  group_by:
+    - user.id
+
+  # Conditions
+  condition:
+    - field: event.action
+      operator: equals
+      value: auth.login.success
+
+  # Custom logic (would be implemented in detection engine)
+  custom:
+    type: impossible_travel
+    max_speed_kmh: 1000  # Maximum realistic travel speed
+    min_distance_km: 500  # Minimum distance to consider
+
+# Alert configuration
+alert:
+  priority: critical
+  notify:
+    - security_team
+    - user_manager
+  tags:
+    - impossible_travel
+    - account_compromise
+    - mitre_attack:t1078
+
+# Response actions
+response:
+  - action: require_mfa
+    target: user
+  - action: alert_siem
+  - action: create_incident
+    severity: critical
+  - action: notify_user
+    message: "Unusual login location detected"
+
+# Testing
+test_cases:
+  - name: trigger_impossible_travel
+    description: Login from NYC then London 30 min later
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "event.action": "auth.login.success", "user.id": "user123", "client.ip": "203.0.113.10", "client.geo.city": "New York", "client.geo.latitude": 40.7128, "client.geo.longitude": -74.0060}
+      - {"@timestamp": "2025-11-01T12:30:00Z", "event.action": "auth.login.success", "user.id": "user123", "client.ip": "198.51.100.20", "client.geo.city": "London", "client.geo.latitude": 51.5074, "client.geo.longitude": -0.1278}
+    expected: true
+
+  - name: normal_travel
+    description: Login from same city multiple times
+    input:
+      - {"@timestamp": "2025-11-01T12:00:00Z", "event.action": "auth.login.success", "user.id": "user456", "client.ip": "203.0.113.30", "client.geo.city": "San Francisco"}
+      - {"@timestamp": "2025-11-01T14:00:00Z", "event.action": "auth.login.success", "user.id": "user456", "client.ip": "203.0.113.31", "client.geo.city": "San Francisco"}
+    expected: false
