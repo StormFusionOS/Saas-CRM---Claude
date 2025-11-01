@@ -1,0 +1,126 @@
+"""
+CRM API Dependencies.
+
+Dependency injection for database sessions, authentication, and authorization.
+"""
+
+from typing import Dict, Generator
+from fastapi import Depends, Header, HTTPException, status
+from app.db import get_db, InMemoryDB
+from app.core.security import verify_token, Role
+
+
+def get_token_from_header(authorization: str = Header(...)) -> str:
+    """
+    Extract JWT token from Authorization header.
+
+    Args:
+        authorization: Authorization header value
+
+    Returns:
+        JWT token string
+
+    Raises:
+        HTTPException: If header format is invalid
+    """
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header format",
+        )
+
+    return authorization[7:]  # Remove "Bearer " prefix
+
+
+def get_claims(token: str = Depends(get_token_from_header)) -> Dict:
+    """
+    Get JWT claims from token.
+
+    Args:
+        token: JWT token string
+
+    Returns:
+        Decoded JWT claims
+
+    Raises:
+        HTTPException: If token is invalid or expired
+    """
+    try:
+        claims = verify_token(token)
+        return claims
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid or expired token: {str(e)}",
+        )
+
+
+def require_sales_claims(
+    claims: Dict = Depends(get_claims)
+) -> Dict:
+    """
+    Require SALES, SALES_MANAGER, or OWNER role.
+
+    Args:
+        claims: JWT claims
+
+    Returns:
+        Claims if authorized
+
+    Raises:
+        HTTPException: If user doesn't have required role
+    """
+    user_roles = claims.get("roles", [])
+    required_roles = [Role.SALES, Role.SALES_MANAGER, Role.OWNER]
+
+    has_required_role = any(
+        role.value in user_roles for role in required_roles
+    )
+
+    if not has_required_role:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Requires SALES, SALES_MANAGER, or OWNER role.",
+        )
+
+    return claims
+
+
+def require_manager_claims(
+    claims: Dict = Depends(get_claims)
+) -> Dict:
+    """
+    Require SALES_MANAGER or OWNER role.
+
+    Args:
+        claims: JWT claims
+
+    Returns:
+        Claims if authorized
+
+    Raises:
+        HTTPException: If user doesn't have required role
+    """
+    user_roles = claims.get("roles", [])
+    required_roles = [Role.SALES_MANAGER, Role.OWNER]
+
+    has_required_role = any(
+        role.value in user_roles for role in required_roles
+    )
+
+    if not has_required_role:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Requires SALES_MANAGER or OWNER role.",
+        )
+
+    return claims
+
+
+__all__ = [
+    "get_db",
+    "get_token_from_header",
+    "get_claims",
+    "require_sales_claims",
+    "require_manager_claims",
+]

@@ -1,0 +1,156 @@
+# ==============================================================================
+# Docker Compose Configuration for Production-Ready Monorepo
+# ==============================================================================
+# Services: PostgreSQL (CRM & Ops), Redis, Nginx (optional)
+#
+# Usage:
+#   docker-compose up -d              # Start services
+#   docker-compose ps                 # Check status
+#   docker-compose logs -f service    # View logs
+#   docker-compose down               # Stop services
+#   docker-compose down -v            # Stop and remove volumes
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # CRM Database
+  # ----------------------------------------------------------------------------
+  crm-db:
+    image: postgres:15-alpine
+    container_name: crm-db
+    environment:
+      POSTGRES_DB: ${CRM_DB_NAME:-crm}
+      POSTGRES_USER: ${CRM_DB_USER:-crm_user}
+      POSTGRES_PASSWORD: ${CRM_DB_PASSWORD:-crm_password}
+    ports:
+      - "${CRM_DB_PORT:-5433}:5432"
+    volumes:
+      - crm-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CRM_DB_USER:-crm_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # ----------------------------------------------------------------------------
+  # Ops Database
+  # ----------------------------------------------------------------------------
+  ops-db:
+    image: postgres:15-alpine
+    container_name: ops-db
+    environment:
+      POSTGRES_DB: ${OPS_DB_NAME:-ops}
+      POSTGRES_USER: ${OPS_DB_USER:-ops_user}
+      POSTGRES_PASSWORD: ${OPS_DB_PASSWORD:-ops_password}
+    ports:
+      - "${OPS_DB_PORT:-5434}:5432"
+    volumes:
+      - ops-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${OPS_DB_USER:-ops_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # ----------------------------------------------------------------------------
+  # Redis (for Celery & caching)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # ----------------------------------------------------------------------------
+  # Optional: Nginx Reverse Proxy
+  # ----------------------------------------------------------------------------
+  # Uncomment to run Nginx in Docker
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./crm/dist:/var/www/crm:ro
+  #     - ./ops-console/dist:/var/www/ops:ro
+  #   depends_on:
+  #     - crm-api
+  #     - ops-api
+  #   networks:
+  #     - app-network
+
+  # ----------------------------------------------------------------------------
+  # Optional: CRM API Backend
+  # ----------------------------------------------------------------------------
+  # Uncomment to run APIs in Docker
+  # crm-api:
+  #   build:
+  #     context: ./crm_api
+  #     dockerfile: Dockerfile
+  #   container_name: crm-api
+  #   environment:
+  #     - CRM_DB_HOST=crm-db
+  #     - CRM_DB_PORT=5432
+  #     - REDIS_HOST=redis
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - crm-db
+  #     - redis
+  #   networks:
+  #     - app-network
+
+  # ----------------------------------------------------------------------------
+  # Optional: Ops API Backend
+  # ----------------------------------------------------------------------------
+  # ops-api:
+  #   build:
+  #     context: ./ops_api
+  #     dockerfile: Dockerfile
+  #   container_name: ops-api
+  #   environment:
+  #     - OPS_DB_HOST=ops-db
+  #     - OPS_DB_PORT=5432
+  #     - REDIS_HOST=redis
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - ops-db
+  #     - redis
+  #   networks:
+  #     - app-network
+
+# ==============================================================================
+# Networks
+# ==============================================================================
+networks:
+  app-network:
+    driver: bridge
+
+# ==============================================================================
+# Volumes
+# ==============================================================================
+volumes:
+  crm-db-data:
+    driver: local
+  ops-db-data:
+    driver: local
+  redis-data:
+    driver: local
