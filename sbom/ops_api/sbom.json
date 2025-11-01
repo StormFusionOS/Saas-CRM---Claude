@@ -1,0 +1,60 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:3102f016-e6c4-42d4-a482-109a47a562b0",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-11-01T21:52:04.019392+00:00",
+    "component": {
+      "type": "application",
+      "name": "ops_api",
+      "version": "1.0.0",
+      "description": "Operations API Backend Service",
+      "bom-ref": "pkg:generic/ops_api@1.0.0"
+    },
+    "tools": [
+      {
+        "name": "RiverCityClean SBOM Generator",
+        "version": "1.0.0",
+        "vendor": "RiverCityClean"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "app",
+      "version": "unknown",
+      "purl": "pkg:pypi/app",
+      "bom-ref": "pkg:pypi/app@unknown"
+    },
+    {
+      "type": "library",
+      "name": "fastapi",
+      "version": "unknown",
+      "purl": "pkg:pypi/fastapi",
+      "bom-ref": "pkg:pypi/fastapi@unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "structlog",
+      "version": "unknown",
+      "purl": "pkg:pypi/structlog",
+      "bom-ref": "pkg:pypi/structlog@unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    }
+  ]
+}

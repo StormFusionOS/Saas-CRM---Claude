@@ -10,7 +10,7 @@
 #   make docker-down       - Stop Docker services
 # ==============================================================================
 
-.PHONY: help setup test test-crm test-ops test-frontend lint clean docker-up docker-down migrate dev dev-stop checks checks-fast seed seed-crm seed-ops seed-clear
+.PHONY: help setup test test-crm test-ops test-frontend lint clean docker-up docker-down migrate dev dev-stop checks checks-fast seed seed-crm seed-ops seed-clear supply-chain supply-chain-sbom supply-chain-license supply-chain-attest supply-chain-verify supply-chain-validate supply-chain-license-strict
 
 # Default target
 .DEFAULT_GOAL := help
@@ -287,3 +287,50 @@ docs: ## Generate API documentation
 
 ci: checks ## Run CI pipeline (all quality checks)
 	@echo "$(GREEN)✓ CI pipeline passed$(NC)"
+
+# ==============================================================================
+# SUPPLY CHAIN SECURITY
+# ==============================================================================
+
+supply-chain: ## Run all supply chain security checks
+	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
+	@echo "$(GREEN)  Supply Chain Security Pipeline$(NC)"
+	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
+	@echo ""
+	@$(MAKE) supply-chain-sbom
+	@$(MAKE) supply-chain-license
+	@$(MAKE) supply-chain-attest
+	@$(MAKE) supply-chain-verify
+	@echo ""
+	@echo "$(GREEN)✓ All supply chain security checks passed$(NC)"
+
+supply-chain-sbom: ## Generate SBOMs for all services
+	@echo "$(YELLOW)Generating SBOMs...$(NC)"
+	@python tools/sbom/generate.py --all
+	@echo "$(GREEN)✓ SBOMs generated$(NC)"
+
+supply-chain-license: ## Check licenses against policy
+	@echo "$(YELLOW)Checking licenses...$(NC)"
+	@python tools/sbom/license_check.py
+	@echo "$(GREEN)✓ License check passed$(NC)"
+
+supply-chain-attest: ## Generate signed attestations
+	@echo "$(YELLOW)Generating attestations...$(NC)"
+	@BUILD_ID=$$(date -u +%Y%m%d-%H%M%S)-$$(git rev-parse --short HEAD 2>/dev/null || echo "local"); \
+	python tools/sign/attest.py --all --build-id $$BUILD_ID
+	@echo "$(GREEN)✓ Attestations generated$(NC)"
+
+supply-chain-verify: ## Verify attestations
+	@echo "$(YELLOW)Verifying attestations...$(NC)"
+	@python tools/sign/verify.py --verify-all
+	@echo "$(GREEN)✓ Verification passed$(NC)"
+
+supply-chain-validate: ## Validate SBOMs only
+	@echo "$(YELLOW)Validating SBOMs...$(NC)"
+	@python tools/sbom/generate.py --validate
+	@echo "$(GREEN)✓ SBOM validation passed$(NC)"
+
+supply-chain-license-strict: ## Check licenses in strict mode
+	@echo "$(YELLOW)Checking licenses (strict mode)...$(NC)"
+	@python tools/sbom/license_check.py --strict
+	@echo "$(GREEN)✓ Strict license check passed$(NC)"

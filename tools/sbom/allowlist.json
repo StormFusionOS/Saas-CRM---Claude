@@ -1,0 +1,43 @@
+{
+  "description": "Approved licenses for RiverCityClean dependencies",
+  "version": "1.0",
+  "last_updated": "2025-11-01",
+  "owner": "Security Team",
+  "approved_licenses": [
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "0BSD",
+    "CC0-1.0",
+    "Unlicense",
+    "Python-2.0",
+    "PSF-2.0"
+  ],
+  "conditionally_approved": [
+    {
+      "license": "LGPL-3.0",
+      "condition": "Dynamic linking only",
+      "packages": ["psycopg2"]
+    },
+    {
+      "license": "Apache-2.0 OR BSD-3-Clause",
+      "condition": "Dual license, both options approved",
+      "packages": ["cryptography"]
+    }
+  ],
+  "denied_licenses": [
+    "GPL-2.0",
+    "GPL-3.0",
+    "AGPL-3.0",
+    "SSPL-1.0",
+    "Commons Clause",
+    "Proprietary"
+  ],
+  "policy_notes": {
+    "copyleft": "Strong copyleft licenses (GPL, AGPL) are denied to avoid license contamination of proprietary code",
+    "permissive": "Permissive licenses (MIT, Apache, BSD) are approved without restrictions",
+    "weak_copyleft": "LGPL is conditionally approved for runtime/dynamic linking only"
+  }
+}

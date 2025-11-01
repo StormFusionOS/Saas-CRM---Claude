@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "type": "in-toto",
+  "subject": {
+    "name": "ops_api",
+    "type": "python",
+    "build_id": "20251101-214854"
+  },
+  "predicate": {
+    "builder": {
+      "id": "RiverCityClean CI",
+      "version": "1.0.0"
+    },
+    "buildType": "python-build",
+    "invocation": {
+      "environment": {
+        "timestamp": "2025-11-01T21:48:54.468377+00:00",
+        "platform": "linux",
+        "python_version": "3.11.14",
+        "git_commit": "7f47cdaeba41df2314aa3fd9869b680487a3364f",
+        "git_branch": "claude/setup-production-monorepo-011CUhodZTqfxTSwEx6QbENK",
+        "git_remote": "http://local_proxy@127.0.0.1:42615/git/StormFusionOS/Saas-CRM---Claude"
+      },
+      "parameters": {}
+    },
+    "materials": [
+      {
+        "uri": "file://sbom/ops_api/sbom.json",
+        "digest": {
+          "sha256": "2f938950e10fefd3b20dd618768689cf29a54b1755d15dae50583d8da3f9f99f"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/security.py",
+        "digest": {
+          "sha256": "c3bf17db1f200c0ffc19a8dbda2f9bb760376e7fc05528bebb0e33e1602c91de"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/db.py",
+        "digest": {
+          "sha256": "5cf4f09782e545b539eb3dbaed85dd309ab89efe860d6b6e2bec2aa0398f9ac0"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/main.py",
+        "digest": {
+          "sha256": "9556e01d68141c7ca7428fd3e42ff8b33a4ca3b9ebbaece490ddf1c45f97d0d8"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/__init__.py",
+        "digest": {
+          "sha256": "290ccfc5b05ac5834d95351464d59ae108129e80d4b6de150f4cf5d8af75c28e"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/models/service_health.py",
+        "digest": {
+          "sha256": "8ac15f8513849709e2e34b55cef4a03c1b21212c054d01770eecafba45f6717a"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/models/alert.py",
+        "digest": {
+          "sha256": "a161353c873116500e9da0aa1bbf9bd48244b67bd15f840dec9bde8ea5f59543"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/models/__init__.py",
+        "digest": {
+          "sha256": "ef54fbd37d25d3bcfb9d9c96223233275a0612866a92a15d20666d7a64f0c01e"
+        }
+      },
+      {
+        "uri": "file://ops_api/app/core/config.py",
+        "digest": {
+          "sha256": "efd34325c4219645deb2318311da8482b4584336148eb941797c96a32baf2771"
+        }
+      },
+      {
+        "uri": "file://ops_api/tests/conftest.py",
+        "digest": {
+          "sha256": "c84ff8bd4bb7aa56158a85840c2948d82b1716c2b23296d44a3d5c3654f9242c"
+        }
+      },
+      {
+        "uri": "file://ops_api/tests/test_hardening_script.py",
+        "digest": {
+          "sha256": "804f6d1c1a8a52601aec004f8e42a8545781be2f6398dbb97952f69ceaba7372"
+        }
+      }
+    ],
+    "metadata": {
+      "buildStartedOn": "2025-11-01T21:48:54.504676+00:00",
+      "buildFinishedOn": "2025-11-01T21:48:54.504683+00:00",
+      "reproducible": true
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "version": "1.0",
+  "type": "in-toto",
+  "subject": {
+    "name": "crm_api",
+    "type": "python",
+    "build_id": "20251101-214854"
+  },
+  "predicate": {
+    "builder": {
+      "id": "RiverCityClean CI",
+      "version": "1.0.0"
+    },
+    "buildType": "python-build",
+    "invocation": {
+      "environment": {
+        "timestamp": "2025-11-01T21:48:54.427975+00:00",
+        "platform": "linux",
+        "python_version": "3.11.14",
+        "git_commit": "7f47cdaeba41df2314aa3fd9869b680487a3364f",
+        "git_branch": "claude/setup-production-monorepo-011CUhodZTqfxTSwEx6QbENK",
+        "git_remote": "http://local_proxy@127.0.0.1:42615/git/StormFusionOS/Saas-CRM---Claude"
+      },
+      "parameters": {}
+    },
+    "materials": [
+      {
+        "uri": "file://sbom/crm_api/sbom.json",
+        "digest": {
+          "sha256": "6c0e5314ec77693fd1b868b99137385ebf3b6a1f7a911674f9b23c5877d74b90"
+        }
+      },
+      {
+        "uri": "file://crm_api/alembic/env.py",
+        "digest": {
+          "sha256": "4c4f71d93e7eef4e64d9fc9334dfb8d969ff645d5030f3ba837af074b6df2c40"
+        }
+      },
+      {
+        "uri": "file://crm_api/alembic/versions/202401030001_add_interactions_and_auto_reply.py",
+        "digest": {
+          "sha256": "2b9d8ea7870b00b83426e9577109be2469c9643a960c22972a03f375669b9886"
+        }
+      },
+      {
+        "uri": "file://crm_api/alembic/versions/202401010001_initial_schema.py",
+        "digest": {
+          "sha256": "1184e797a399af7c9ecdf6ffaa523ae1ef6d4ecbb9547dfc082deb51d438fb51"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/models.py",
+        "digest": {
+          "sha256": "b16547466f414032c2c2a1c563bc8f94d68ed509f46918f267c21d6668bf95dd"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/db.py",
+        "digest": {
+          "sha256": "edc8f349b38e7d83513a4614e492efd46f86a412e5aca17433ad5139155facf5"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/main.py",
+        "digest": {
+          "sha256": "153701bc60b52d0f644dda5b3d0490733c3828a42e6c0def23dea83a4b45f755"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/__init__.py",
+        "digest": {
+          "sha256": "7f7df286eddbd02a6a5345991f8589589745ad62531d7133a668f3402cc9ebf0"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/db_models.py",
+        "digest": {
+          "sha256": "7039627945f9f8fffe5e5dd7e0eec9777a80a803904a1c0877f93643a60be6db"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/services/email_poller.py",
+        "digest": {
+          "sha256": "666ee4d141fb78f177575917957267f362b01d3a6c643c66a7b25848c69e41d8"
+        }
+      },
+      {
+        "uri": "file://crm_api/app/services/intake.py",
+        "digest": {
+          "sha256": "f653be62a56025b84a6c97c3935290e9f926feb50a270ac47a2b3dd5f0abf4b2"
+        }
+      }
+    ],
+    "metadata": {
+      "buildStartedOn": "2025-11-01T21:48:54.467326+00:00",
+      "buildFinishedOn": "2025-11-01T21:48:54.467335+00:00",
+      "reproducible": true
+    }
+  }
+}

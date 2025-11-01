@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "type": "in-toto",
+  "subject": {
+    "name": "ops-console",
+    "type": "nodejs",
+    "build_id": "20251101-214854"
+  },
+  "predicate": {
+    "builder": {
+      "id": "RiverCityClean CI",
+      "version": "1.0.0"
+    },
+    "buildType": "nodejs-build",
+    "invocation": {
+      "environment": {
+        "timestamp": "2025-11-01T21:48:54.536476+00:00",
+        "platform": "linux",
+        "python_version": "3.11.14",
+        "git_commit": "7f47cdaeba41df2314aa3fd9869b680487a3364f",
+        "git_branch": "claude/setup-production-monorepo-011CUhodZTqfxTSwEx6QbENK",
+        "git_remote": "http://local_proxy@127.0.0.1:42615/git/StormFusionOS/Saas-CRM---Claude"
+      },
+      "parameters": {}
+    },
+    "materials": [
+      {
+        "uri": "file://sbom/ops-console/sbom.json",
+        "digest": {
+          "sha256": "9201c8a591c5c1dc89e89b589f43c5c313e971936d557d8edcc36c30cbdca8f4"
+        }
+      }
+    ],
+    "metadata": {
+      "buildStartedOn": "2025-11-01T21:48:54.566881+00:00",
+      "buildFinishedOn": "2025-11-01T21:48:54.566887+00:00",
+      "reproducible": true
+    }
+  }
+}

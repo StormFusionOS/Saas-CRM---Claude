@@ -1,0 +1,74 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:2ce82920-2a47-4910-8948-299620244098",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-11-01T21:52:04.005556+00:00",
+    "component": {
+      "type": "application",
+      "name": "crm_api",
+      "version": "1.0.0",
+      "description": "CRM API Backend Service",
+      "bom-ref": "pkg:generic/crm_api@1.0.0"
+    },
+    "tools": [
+      {
+        "name": "RiverCityClean SBOM Generator",
+        "version": "1.0.0",
+        "vendor": "RiverCityClean"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "app",
+      "version": "unknown",
+      "purl": "pkg:pypi/app",
+      "bom-ref": "pkg:pypi/app@unknown"
+    },
+    {
+      "type": "library",
+      "name": "fastapi",
+      "version": "unknown",
+      "purl": "pkg:pypi/fastapi",
+      "bom-ref": "pkg:pypi/fastapi@unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "pydantic",
+      "version": "unknown",
+      "purl": "pkg:pypi/pydantic",
+      "bom-ref": "pkg:pypi/pydantic@unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "name": "structlog",
+      "version": "unknown",
+      "purl": "pkg:pypi/structlog",
+      "bom-ref": "pkg:pypi/structlog@unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "type": "in-toto",
+  "subject": {
+    "name": "crm",
+    "type": "nodejs",
+    "build_id": "20251101-214854"
+  },
+  "predicate": {
+    "builder": {
+      "id": "RiverCityClean CI",
+      "version": "1.0.0"
+    },
+    "buildType": "nodejs-build",
+    "invocation": {
+      "environment": {
+        "timestamp": "2025-11-01T21:48:54.505659+00:00",
+        "platform": "linux",
+        "python_version": "3.11.14",
+        "git_commit": "7f47cdaeba41df2314aa3fd9869b680487a3364f",
+        "git_branch": "claude/setup-production-monorepo-011CUhodZTqfxTSwEx6QbENK",
+        "git_remote": "http://local_proxy@127.0.0.1:42615/git/StormFusionOS/Saas-CRM---Claude"
+      },
+      "parameters": {}
+    },
+    "materials": [
+      {
+        "uri": "file://sbom/crm/sbom.json",
+        "digest": {
+          "sha256": "ade9de9d24b6a0a9b1f980f324907a315d30a1374e8825612dc46324c7e11ffe"
+        }
+      }
+    ],
+    "metadata": {
+      "buildStartedOn": "2025-11-01T21:48:54.535552+00:00",
+      "buildFinishedOn": "2025-11-01T21:48:54.535557+00:00",
+      "reproducible": true
+    }
+  }
+}
