@@ -1,0 +1,38 @@
+[
+  {
+    "file_pattern": ".*test.*",
+    "reason": "Test files may contain sample data"
+  },
+  {
+    "file_pattern": ".*example.*",
+    "reason": "Example files contain placeholder data"
+  },
+  {
+    "file": "docs/observability/runbook.md",
+    "pattern_id": "email",
+    "reason": "Documentation contains example email addresses"
+  },
+  {
+    "file": "docs/observability/runbook.md",
+    "pattern_id": "ip_address",
+    "reason": "Documentation contains example IP addresses"
+  },
+  {
+    "file_pattern": ".*/demo\\.py$",
+    "reason": "Demo scripts contain sample credentials"
+  },
+  {
+    "file_pattern": ".*\\.md$",
+    "pattern_id": "email",
+    "reason": "Documentation may reference example emails"
+  },
+  {
+    "file_pattern": ".*\\.md$",
+    "pattern_id": "ip_address",
+    "reason": "Documentation may reference example IPs"
+  },
+  {
+    "file_pattern": "tools/dlp/test_sample\\.txt",
+    "reason": "DLP test sample file - intentionally contains violations"
+  }
+]
