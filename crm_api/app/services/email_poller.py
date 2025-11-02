@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 Email poller service.
 
 For testing: polls a local filesystem "inbox" directory for mock email files.

@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 OIDC (OpenID Connect) Stub Implementation
 
 This module provides a complete offline stub for OIDC authentication flows.

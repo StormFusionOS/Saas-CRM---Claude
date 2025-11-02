@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 Celery logging utilities stub.
 
 PRODUCTION NOTE: Use real celery.utils.log module.

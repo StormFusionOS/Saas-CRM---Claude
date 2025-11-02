@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 OPA Policy Runner Stub
 
 Evaluates CI/CD policy defined in policy/ci.rego without requiring actual OPA installation.

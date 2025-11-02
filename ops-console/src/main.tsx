@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2025 RiverCityClean
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the RiverCityClean SaaS CRM system.
+ */
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'

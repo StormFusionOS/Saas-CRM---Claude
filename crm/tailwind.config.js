@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2025 RiverCityClean
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the RiverCityClean SaaS CRM system.
+ */
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],

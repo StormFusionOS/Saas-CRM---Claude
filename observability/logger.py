@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 Structured Logging Module
 
 Provides ECS-like structured logging with JSON Lines output, PII redaction,

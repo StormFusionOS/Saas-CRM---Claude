@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2025 RiverCityClean
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the RiverCityClean SaaS CRM system.
+ */
+
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '../lib/auth-context';
 import LoginPage from '../pages/LoginPage';

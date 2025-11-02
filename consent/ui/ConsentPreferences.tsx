@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2025 RiverCityClean
+ * SPDX-License-Identifier: MIT
+ *
+ * This file is part of the RiverCityClean SaaS CRM system.
+ */
+
+/**
  * Consent Preferences Page
  *
  * Detailed consent management interface for users.

@@ -1,3 +1,10 @@
+"""
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
 """Leads and contacts routes."""
 
 from typing import List

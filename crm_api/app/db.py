@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 CRM API In-Memory Database for Testing.
 
 PRODUCTION NOTE: Replace this with real SQLAlchemy session management:

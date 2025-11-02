@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Copyright (c) 2025 RiverCityClean
+# SPDX-License-Identifier: MIT
+#
+# This file is part of the RiverCityClean SaaS CRM system.
+
 # ==============================================================================
 # Development Environment Startup Script
 # ==============================================================================

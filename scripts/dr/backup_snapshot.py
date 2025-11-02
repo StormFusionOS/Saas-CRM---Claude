@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 Disaster Recovery - Backup Snapshot Script
 
 Creates point-in-time backups of Postgres and Redis with integrity verification.

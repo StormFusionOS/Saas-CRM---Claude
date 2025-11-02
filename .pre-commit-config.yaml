@@ -111,6 +111,23 @@ repos:
         files: \.(py|js|ts|tsx|jsx|yml|yaml|json|sh|env)$
         exclude: ^(\.env\.example|tools/config/sanity\.py|scripts/config/.*\.sh)$
 
+      # License header check
+      - id: license-headers
+        name: Check license headers
+        entry: python scripts/policy/headers_check.py --check-only
+        language: system
+        pass_filenames: false
+        always_run: false
+        stages: [commit]
+        exclude: |
+          (?x)^(
+            node_modules/.*|
+            .*/migrations/.*|
+            .*/alembic/.*|
+            .*\.min\.(js|css)|
+            .*\.bundle\.(js|css)
+          )$
+
 # ==============================================================================
 # Configuration for specific tools
 # ==============================================================================

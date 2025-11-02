@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 Chaos Tests - Resilience Validation
 
 Tests that verify retry logic, fallbacks, and graceful degradation.

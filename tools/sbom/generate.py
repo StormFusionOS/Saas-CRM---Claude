@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 SBOM (Software Bill of Materials) Generator
 
 Generates CycloneDX-like JSON SBOMs for RiverCityClean services.

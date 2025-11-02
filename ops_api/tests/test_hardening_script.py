@@ -1,4 +1,11 @@
 """
+Copyright (c) 2025 RiverCityClean
+SPDX-License-Identifier: MIT
+
+This file is part of the RiverCityClean SaaS CRM system.
+"""
+
+"""
 Tests for Nginx configuration hardening.
 
 Verifies that the Nginx config includes proper security headers and policies.
