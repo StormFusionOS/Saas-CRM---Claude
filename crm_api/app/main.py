@@ -21,6 +21,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.routes import auth, leads, webhooks
+from app.middleware import RequestIDMiddleware, ErrorHandlerMiddleware
 import structlog
 
 
@@ -41,6 +42,12 @@ def create_app() -> FastAPI:
         version=settings.VERSION,
         debug=settings.DEBUG,
     )
+
+    # Error handling middleware (must be first to catch all errors)
+    app.add_middleware(ErrorHandlerMiddleware)
+
+    # Request ID middleware (adds request_id to all requests)
+    app.add_middleware(RequestIDMiddleware)
 
     # CORS middleware
     app.add_middleware(
