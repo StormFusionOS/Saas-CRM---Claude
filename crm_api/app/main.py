@@ -77,6 +77,29 @@ def create_app() -> FastAPI:
             "version": settings.VERSION
         }
 
+    # Metrics endpoint
+    @app.get("/metrics")
+    def metrics():
+        """
+        Metrics endpoint for monitoring.
+
+        Returns basic application metrics. In production, this would be
+        integrated with Prometheus or similar monitoring systems.
+        """
+        from app.db import _users, _contacts, _leads, _interactions
+
+        return {
+            "service": "crm-api",
+            "version": settings.VERSION,
+            "counts": {
+                "users": len(_users),
+                "contacts": len(_contacts),
+                "leads": len(_leads),
+                "interactions": len(_interactions),
+            },
+            "uptime_seconds": "N/A",  # Would track actual uptime in production
+        }
+
     @app.on_event("startup")
     async def startup_event():
         """Run on application startup."""

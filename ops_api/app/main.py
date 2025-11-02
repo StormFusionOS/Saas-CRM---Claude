@@ -45,6 +45,30 @@ def create_app() -> FastAPI:
     def health_check():
         return {"status": "ok", "service": "ops-api", "version": settings.VERSION}
 
+    # Metrics endpoint
+    @app.get("/metrics")
+    def metrics():
+        """
+        Metrics endpoint for monitoring.
+
+        Returns basic application metrics. In production, this would be
+        integrated with Prometheus or similar monitoring systems.
+        """
+        return {
+            "service": "ops-api",
+            "version": settings.VERSION,
+            "counts": {
+                "services": 12,  # Placeholder - would query actual data
+                "alerts": 3,
+                "deployments": 0,
+            },
+            "system": {
+                "cpu_usage": "45%",  # Placeholder - would query actual metrics
+                "memory_usage": "62%",
+            },
+            "uptime_seconds": "N/A",  # Would track actual uptime in production
+        }
+
     return app
 
 
