@@ -6,7 +6,8 @@
     "dev": "vite --port 5173",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "analyze": "npm run build && node ../scripts/build/analyze-bundle.js dist CRM"
   },
   "dependencies": {
     "react": "^18.2.0",
