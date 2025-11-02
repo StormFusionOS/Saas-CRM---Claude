@@ -1,0 +1,16 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hex icon -->
+  <path d="M30 10L45 18.66V35.34L30 44L15 35.34V18.66L30 10Z" stroke="url(#gradient)" stroke-width="2" fill="none"/>
+  <path d="M30 18L38 22.32V30.68L30 35L22 30.68V22.32L30 18Z" fill="url(#gradient)"/>
+
+  <!-- Text -->
+  <text x="55" y="35" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="20" font-weight="600">RiverCityClean</text>
+
+  <!-- Gradient -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#005AE0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00B7FD;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

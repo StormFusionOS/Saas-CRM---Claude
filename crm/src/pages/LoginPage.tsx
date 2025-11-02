@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth-context';
 import { authAPI } from '../lib/api';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import Input from '../components/ui/Input';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('Nathan@RiverCityClean.com');
@@ -22,36 +25,49 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center">CRM Login</h2>
-        {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2"
-              required
-            />
+    <div className="min-h-screen flex items-center justify-center bg-bg-base relative overflow-hidden">
+      {/* Radial gradient accent */}
+      <div className="absolute inset-0 bg-gradient-radial from-primary/20 via-bg-base to-bg-base pointer-events-none"
+           style={{ background: 'radial-gradient(circle at center, rgba(0, 90, 224, 0.15) 0%, rgba(10, 15, 28, 1) 70%)' }} />
+
+      <Card variant="glass" padding="lg" className="max-w-md w-full relative z-10">
+        <h2 className="text-3xl font-display font-bold mb-2 text-center text-gradient">
+          CRM Login
+        </h2>
+        <p className="text-text-secondary text-center mb-8">RiverCityClean Customer Portal</p>
+
+        {error && (
+          <div className="bg-error/10 border border-error text-error p-3 rounded-base mb-6" role="alert">
+            {error}
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2"
-              required
-            />
-          </div>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-            Login
-          </button>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            type="email"
+            id="email"
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            aria-label="Email address"
+          />
+
+          <Input
+            type="password"
+            id="password"
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            aria-label="Password"
+          />
+
+          <Button type="submit" variant="primary" size="lg" fullWidth>
+            Sign In
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 };

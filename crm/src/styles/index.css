@@ -4,8 +4,8 @@
  */
 
 /* Import design tokens */
-@import './styles/tokens.css';
-@import './styles/code.css';
+@import './tokens.css';
+@import './code.css';
 
 /* Import Tailwind */
 @tailwind base;
@@ -122,18 +122,11 @@
 /* === Custom Utilities === */
 @layer utilities {
   .focus-ring {
-    outline: none;
-  }
-
-  .focus-ring:focus {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    @apply focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-bg-base;
   }
 
   .glass-surface {
-    backdrop-filter: blur(12px);
-    background-color: rgba(18, 25, 43, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    @apply backdrop-blur-md bg-bg-elev/80 border border-white/10;
   }
 
   .neon-border {

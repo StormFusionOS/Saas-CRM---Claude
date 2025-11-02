@@ -1,0 +1,114 @@
+/**
+ * Design Tokens
+ * Electric Blue + Cyan on Dark theme for RiverCityClean CRM
+ */
+
+:root {
+  /* === Brand Colors === */
+  --color-storm-blue: #005AE0;
+  --color-electric-cyan: #00B7FD;
+  --color-midnight: #041631;
+  --color-deep-ocean: #0A2647;
+  --color-steel-gray: #7A8B99;
+
+  /* === Semantic Colors (Dark Theme Default) === */
+  --color-bg-base: #0A0F1C;
+  --color-bg-elev: #12192B;
+  --color-bg-hover: #1A2538;
+  --color-bg-active: #243447;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A8B4C4;
+  --color-text-muted: #6B7A8D;
+  --color-text-inverse: #0A0F1C;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-default: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.24);
+
+  /* === Status Colors === */
+  --color-success: #10B981;
+  --color-success-bg: rgba(16, 185, 129, 0.1);
+  --color-warning: #F59E0B;
+  --color-warning-bg: rgba(245, 158, 11, 0.1);
+  --color-error: #EF4444;
+  --color-error-bg: rgba(239, 68, 68, 0.1);
+  --color-info: #3B82F6;
+  --color-info-bg: rgba(59, 130, 246, 0.1);
+
+  /* === Interactive States === */
+  --color-primary: var(--color-storm-blue);
+  --color-primary-hover: #0066FF;
+  --color-primary-active: #004BB8;
+
+  --color-accent: var(--color-electric-cyan);
+  --color-accent-hover: #1AC5FF;
+  --color-accent-active: #0099D6;
+
+  /* === Shadows === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 183, 253, 0.3);
+  --shadow-glow-blue: 0 0 20px rgba(0, 90, 224, 0.3);
+
+  /* === Border Radius === */
+  --radius-sm: 6px;
+  --radius-base: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* === Focus Ring === */
+  --ring-width: 2px;
+  --ring-color: var(--color-electric-cyan);
+  --ring-opacity: 0.5;
+  --ring-offset: 2px;
+  --ring-offset-color: var(--color-bg-base);
+
+  /* === Spacing === */
+  --space-nav-collapsed: 72px;
+  --space-nav-expanded: 240px;
+  --space-topbar-height: 64px;
+
+  /* === Typography === */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* === Transitions === */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === Z-Index === */
+  --z-base: 1;
+  --z-elevated: 10;
+  --z-modal: 100;
+  --z-popover: 200;
+  --z-tooltip: 300;
+}
+
+/* === Light Theme Overrides (Optional) === */
+[data-theme="light"] {
+  --color-bg-base: #FFFFFF;
+  --color-bg-elev: #F8F9FA;
+  --color-bg-hover: #F1F3F5;
+  --color-bg-active: #E9ECEF;
+
+  --color-text-primary: #0A0F1C;
+  --color-text-secondary: #4A5568;
+  --color-text-muted: #6B7280;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --color-border-default: rgba(0, 0, 0, 0.12);
+  --color-border-strong: rgba(0, 0, 0, 0.24);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  --ring-offset-color: #FFFFFF;
+}
