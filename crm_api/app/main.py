@@ -44,9 +44,13 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Import scheduler here to avoid circular imports
+    from app.api.routes import scheduler
+
     # Include routers
     app.include_router(auth.router, prefix=settings.API_PREFIX)
     app.include_router(leads.router, prefix=settings.API_PREFIX)
+    app.include_router(scheduler.router, prefix=settings.API_PREFIX)
     app.include_router(webhooks.router)  # No prefix for webhooks
 
     # Health check endpoint
