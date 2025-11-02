@@ -4,6 +4,7 @@ import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import LeadsPage from '../pages/LeadsPage';
 import InboxPage from '../pages/InboxPage';
+import VisualCheckPage from '../pages/VisualCheckPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/leads" element={<LeadsPage />} />
           <Route path="/inbox" element={<InboxPage />} />
+          <Route path="/visual-check" element={<VisualCheckPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>

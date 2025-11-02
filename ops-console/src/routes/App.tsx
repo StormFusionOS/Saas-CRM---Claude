@@ -3,6 +3,7 @@ import { AuthProvider } from '../lib/auth-context';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import SystemHealth from '../pages/SystemHealth';
+import VisualCheckPage from '../pages/VisualCheckPage';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/health" element={<SystemHealth />} />
+          <Route path="/visual-check" element={<VisualCheckPage />} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>
