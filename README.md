@@ -124,12 +124,26 @@ All backends use **stub implementations** of FastAPI, Pydantic, Structlog, and C
 - **Node.js 20+** with npm
 - **Docker & Docker Compose** (for databases)
 
-### One-Command Start (Recommended)
+### Configuration
+
+Before starting, configure your environment variables:
 
 ```bash
 # Copy environment template
 cp .env.example .env
 
+# Edit with your values (optional for dev, required for prod)
+nano .env
+
+# Validate configuration
+./scripts/config/check.sh
+```
+
+📖 **See [CONFIG.md](./CONFIG.md)** for complete configuration reference, validation rules, and security guidelines.
+
+### One-Command Start (Recommended)
+
+```bash
 # Start entire development environment
 ./scripts/dev.sh
 ```

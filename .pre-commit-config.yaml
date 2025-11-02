@@ -99,6 +99,18 @@ repos:
         args: [--baseline, .secrets.baseline]
         exclude: package-lock.json
 
+  # ------------------------------------------------------------------------------
+  # Additional regex-based secret patterns
+  # ------------------------------------------------------------------------------
+  - repo: local
+    hooks:
+      - id: block-secrets
+        name: Block common secret patterns
+        entry: scripts/config/secret_patterns.sh
+        language: script
+        files: \.(py|js|ts|tsx|jsx|yml|yaml|json|sh|env)$
+        exclude: ^(\.env\.example|tools/config/sanity\.py|scripts/config/.*\.sh)$
+
 # ==============================================================================
 # Configuration for specific tools
 # ==============================================================================
