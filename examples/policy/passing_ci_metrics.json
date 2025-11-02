@@ -1,0 +1,53 @@
+{
+  "tests": {
+    "status": "passed",
+    "failures": 0,
+    "errors": 0,
+    "total": 847,
+    "duration": 45.3
+  },
+  "coverage": {
+    "backend": 87.5,
+    "frontend": 82.3
+  },
+  "sbom": {
+    "exists": true,
+    "valid": true,
+    "components": 245,
+    "format": "cyclonedx"
+  },
+  "licenses": {
+    "status": "pass",
+    "violations": [],
+    "unknown": [],
+    "total_licenses": 183,
+    "approved": ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]
+  },
+  "performance": {
+    "status": "pass",
+    "failures": [],
+    "warnings": [
+      {
+        "endpoint": "leads",
+        "actual_p95": 480,
+        "budget_p95": 500,
+        "budget_utilization": 96.0
+      }
+    ],
+    "endpoints_tested": 3
+  },
+  "security": {
+    "critical_count": 0,
+    "high_count": 0,
+    "medium_count": 2,
+    "low_count": 5,
+    "scan_date": "2025-11-02"
+  },
+  "pr": {
+    "risk_level": "medium",
+    "approvals": ["@alice", "@bob"],
+    "title": "Add user dashboard analytics feature",
+    "author": "@charlie"
+  },
+  "target_branch": "main"
+}

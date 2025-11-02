@@ -1,0 +1,269 @@
+# CODEOWNERS
+#
+# This file defines code ownership for pull request reviews.
+# Code owners are automatically requested for review when someone opens a pull request
+# that modifies code that they own.
+#
+# Syntax:
+#   pattern owner1 [owner2 ...]
+#
+# More specific patterns take precedence over less specific patterns.
+#
+# GitHub teams should be prefixed with @org/team-name
+# Individual users should be prefixed with @username
+#
+# For this implementation, we use role-based placeholder owners.
+# Replace with actual GitHub usernames or team names.
+
+# ==============================================================================
+# Default Owners
+# ==============================================================================
+# Default owners for everything in the repo (unless a later match takes precedence)
+* @platform-team
+
+# ==============================================================================
+# Infrastructure & DevOps
+# ==============================================================================
+
+# CI/CD pipelines and GitHub Actions workflows
+.github/workflows/ @sre-team @devops-lead
+.github/actions/ @sre-team @devops-lead
+
+# Docker and container orchestration
+Dockerfile @sre-team @platform-lead
+docker-compose*.yml @sre-team @platform-lead
+*.dockerfile @sre-team
+
+# Kubernetes and infrastructure as code
+k8s/ @sre-team @infrastructure-team
+infra/ @sre-team @infrastructure-team
+terraform/ @sre-team @infrastructure-team
+
+# Build and dependency management
+package.json @platform-team @frontend-lead
+package-lock.json @platform-team @frontend-lead
+requirements.txt @platform-team @backend-lead
+pyproject.toml @platform-team @backend-lead
+poetry.lock @platform-team @backend-lead
+
+# ==============================================================================
+# Security & Compliance
+# ==============================================================================
+
+# Security policies and configurations
+.github/CODEOWNERS @security-team @cto
+SECURITY.md @security-team
+docs/security/ @security-team @compliance-lead
+
+# Cryptography and key management
+crypto/ @security-team @crypto-lead
+**/kms*.py @security-team @crypto-lead
+**/encryption*.py @security-team @crypto-lead
+**/field_encryptor*.py @security-team @crypto-lead
+
+# Authentication and authorization
+**/auth/ @security-team @backend-lead
+**/authentication*.py @security-team
+**/authorization*.py @security-team
+**/session*.py @security-team
+**/jwt*.py @security-team
+
+# Compliance and audit
+docs/compliance/ @compliance-lead @legal-team
+scripts/compliance/ @compliance-lead @security-team
+policy/ @compliance-lead @security-team
+
+# Data privacy and GDPR
+consent/ @privacy-team @legal-team
+scripts/data/dsr.py @privacy-team @legal-team @compliance-lead
+scripts/data/retention_enforcer.py @privacy-team @compliance-lead
+
+# DLP and data classification
+tools/dlp/ @security-team @privacy-team
+**/data_classification*.py @privacy-team @compliance-lead
+
+# ==============================================================================
+# Disaster Recovery & SRE
+# ==============================================================================
+
+# Backup and restore
+scripts/dr/ @sre-team @database-admin
+**/backup*.py @sre-team @database-admin
+**/restore*.py @sre-team @database-admin
+
+# Observability and monitoring
+observability/ @sre-team @platform-lead
+**/logging*.py @sre-team
+**/metrics*.py @sre-team
+**/tracing*.py @sre-team
+
+# Chaos engineering and resilience
+tools/chaos/ @sre-team @reliability-lead
+tests/performance/ @sre-team @performance-lead
+
+# SLOs and reliability
+docs/reliability/ @sre-team @reliability-lead
+
+# ==============================================================================
+# Database & Data Layer
+# ==============================================================================
+
+# Database migrations (require DBA review)
+**/migrations/ @database-admin @backend-lead
+**/alembic/ @database-admin @backend-lead
+alembic.ini @database-admin
+
+# Database models and schema
+**/models/ @backend-lead @database-admin
+**/schema*.py @backend-lead @database-admin
+
+# ==============================================================================
+# Backend Application
+# ==============================================================================
+
+# Core business logic
+api/ @backend-lead @platform-lead
+core/ @backend-lead @platform-lead
+services/ @backend-lead
+
+# Background jobs and queues
+**/tasks/ @backend-lead @sre-team
+**/celery*.py @backend-lead @sre-team
+**/worker*.py @backend-lead @sre-team
+
+# External integrations
+integrations/ @backend-lead @integration-team
+**/webhooks/ @backend-lead @integration-team
+
+# ==============================================================================
+# Frontend Application
+# ==============================================================================
+
+# Frontend source code
+frontend/src/ @frontend-lead @platform-lead
+frontend/public/ @frontend-lead
+
+# UI components and design system
+**/components/ @frontend-lead @design-lead
+**/ui/ @frontend-lead @design-lead
+
+# State management
+**/store/ @frontend-lead
+**/redux/ @frontend-lead
+**/context/ @frontend-lead
+
+# Routing and navigation
+**/routes/ @frontend-lead
+**/router/ @frontend-lead
+
+# Frontend build configuration
+frontend/vite.config.ts @frontend-lead @platform-lead
+frontend/tsconfig.json @frontend-lead @platform-lead
+frontend/tailwind.config.js @frontend-lead @design-lead
+
+# ==============================================================================
+# Testing
+# ==============================================================================
+
+# Test infrastructure and frameworks
+tests/ @qa-lead @platform-lead
+pytest.ini @qa-lead @backend-lead
+jest.config.js @qa-lead @frontend-lead
+
+# E2E and integration tests
+tests/e2e/ @qa-lead @frontend-lead @backend-lead
+tests/integration/ @qa-lead @backend-lead
+
+# Performance and load testing
+tools/perf/ @performance-lead @sre-team
+scripts/perf/ @performance-lead @sre-team
+
+# ==============================================================================
+# Supply Chain Security
+# ==============================================================================
+
+# SBOM and attestations
+tools/sbom/ @security-team @supply-chain-lead
+.sbom/ @security-team @supply-chain-lead
+scripts/sbom/ @security-team @supply-chain-lead
+
+# License compliance
+tools/license/ @legal-team @compliance-lead
+
+# ==============================================================================
+# Release Management
+# ==============================================================================
+
+# Release scripts and versioning
+scripts/release/ @release-manager @platform-lead
+CHANGELOG.md @release-manager @platform-lead
+VERSION @release-manager @platform-lead
+
+# Release calendar and documentation
+docs/release/ @release-manager @product-lead
+
+# Policy as code (merge gates)
+policy/ci.rego @release-manager @security-team @platform-lead
+tools/policy/ @release-manager @platform-lead
+
+# ==============================================================================
+# Documentation
+# ==============================================================================
+
+# API documentation
+docs/api/ @backend-lead @technical-writer
+openapi.yaml @backend-lead @technical-writer
+swagger.json @backend-lead @technical-writer
+
+# Architecture and design docs
+docs/architecture/ @platform-lead @cto
+docs/design/ @platform-lead @design-lead
+
+# Runbooks and operational docs
+docs/runbooks/ @sre-team @platform-lead
+docs/dr/ @sre-team @reliability-lead
+docs/data/ @privacy-team @database-admin
+
+# Compliance and legal docs
+docs/compliance/ @compliance-lead @legal-team
+docs/privacy/ @privacy-team @legal-team
+
+# ==============================================================================
+# Configuration Files
+# ==============================================================================
+
+# Application configuration (requires careful review)
+config/ @platform-lead @sre-team
+*.env.example @platform-lead @sre-team
+settings*.py @platform-lead @backend-lead
+
+# Security-sensitive configuration
+.secrets.baseline @security-team
+.gitignore @security-team @platform-lead
+
+# ==============================================================================
+# High-Risk Files (Multiple Approvals Required)
+# ==============================================================================
+
+# Core authentication (requires security + backend lead)
+**/core_auth*.py @security-team @backend-lead @platform-lead
+
+# Payment processing (requires security + backend + legal)
+**/payment*.py @security-team @backend-lead @legal-team
+**/billing*.py @security-team @backend-lead @legal-team
+
+# User data deletion (requires privacy + legal + backend)
+**/delete_user*.py @privacy-team @legal-team @backend-lead
+
+# Production infrastructure (requires SRE + platform + CTO)
+infra/production/ @sre-team @platform-lead @cto
+
+# ==============================================================================
+# Critical System Files
+# ==============================================================================
+
+# Root configuration files
+/.github/CODEOWNERS @platform-lead @cto
+/.github/pull_request_template.md @release-manager @platform-lead
+/README.md @platform-lead @technical-writer
+/LICENSE @legal-team @cto

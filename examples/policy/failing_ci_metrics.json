@@ -1,0 +1,64 @@
+{
+  "tests": {
+    "status": "failed",
+    "failures": 3,
+    "errors": 1,
+    "total": 847,
+    "duration": 52.1
+  },
+  "coverage": {
+    "backend": 82.3,
+    "frontend": 75.8
+  },
+  "sbom": {
+    "exists": true,
+    "valid": true,
+    "components": 245,
+    "format": "cyclonedx"
+  },
+  "licenses": {
+    "status": "fail",
+    "violations": [
+      {
+        "package": "proprietary-lib",
+        "license": "GPL-3.0",
+        "reason": "Copyleft license not approved for commercial use"
+      }
+    ],
+    "unknown": [
+      {
+        "package": "mystery-package",
+        "license": "UNKNOWN"
+      }
+    ],
+    "total_licenses": 184,
+    "approved": ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"]
+  },
+  "performance": {
+    "status": "fail",
+    "failures": [
+      {
+        "endpoint": "login",
+        "actual_p95": 385,
+        "budget_p95": 300,
+        "breach_percentage": 28.3
+      }
+    ],
+    "warnings": [],
+    "endpoints_tested": 3
+  },
+  "security": {
+    "critical_count": 1,
+    "high_count": 2,
+    "medium_count": 5,
+    "low_count": 12,
+    "scan_date": "2025-11-02"
+  },
+  "pr": {
+    "risk_level": "high",
+    "approvals": ["@alice"],
+    "title": "Refactor authentication system",
+    "author": "@dave"
+  },
+  "target_branch": "main"
+}
