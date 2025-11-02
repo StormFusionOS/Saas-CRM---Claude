@@ -1,0 +1,573 @@
+openapi: 3.0.3
+info:
+  title: RiverCityClean CRM API
+  version: 0.1.0
+  description: |
+    CRM API for RiverCityClean SaaS platform.
+
+    This API provides endpoints for:
+    - Authentication and authorization
+    - Lead management
+    - Contact management
+    - Webhook integrations (Facebook, Twilio, Google)
+    - Scheduled tasks
+
+    **Base URL**: `/api/v1`
+
+    **Authentication**: Bearer token (JWT)
+
+    **Rate Limiting**: 100 requests per minute per client
+  contact:
+    name: RiverCityClean API Support
+    email: api@rivercityclean.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.rivercityclean.com
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: auth
+    description: Authentication and authorization
+  - name: leads
+    description: Lead management
+  - name: contacts
+    description: Contact management
+  - name: interactions
+    description: Customer interactions
+  - name: webhooks
+    description: Third-party webhook endpoints
+  - name: scheduler
+    description: Scheduled task management
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Authenticate user and return JWT token pair
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: nathan@rivercityclean.com
+              password: password123
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: User account inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/leads:
+    get:
+      tags:
+        - leads
+      summary: Get leads board
+      description: Get leads organized by status (kanban board)
+      operationId: getLeadsBoard
+      parameters:
+        - name: status_filter
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum: [new, contacted, qualified, proposal, negotiation, closed_won, closed_lost]
+      responses:
+        '200':
+          description: Leads grouped by status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadBoard'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - leads
+      summary: Create new lead
+      description: Create a new lead in the system
+      operationId: createLead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadCreate'
+      responses:
+        '201':
+          description: Lead created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/leads/{lead_id}:
+    get:
+      tags:
+        - leads
+      summary: Get lead by ID
+      description: Retrieve a specific lead with contact details
+      operationId: getLeadById
+      parameters:
+        - name: lead_id
+          in: path
+          required: true
+          description: Lead ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lead found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadWithContact'
+        '404':
+          description: Lead not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - leads
+      summary: Update lead
+      description: Update an existing lead
+      operationId: updateLead
+      parameters:
+        - name: lead_id
+          in: path
+          required: true
+          description: Lead ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadUpdate'
+      responses:
+        '200':
+          description: Lead updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadResponse'
+        '404':
+          description: Lead not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/contacts:
+    post:
+      tags:
+        - contacts
+      summary: Create contact
+      description: Create a new contact
+      operationId: createContact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactCreate'
+      responses:
+        '201':
+          description: Contact created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/webhooks/facebook:
+    post:
+      tags:
+        - webhooks
+      summary: Facebook webhook
+      description: Receive Facebook webhook events
+      operationId: facebookWebhook
+      security: []
+      parameters:
+        - name: X-Hub-Signature
+          in: header
+          required: true
+          description: Facebook signature for verification
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+        '400':
+          description: Invalid signature
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/webhooks/twilio:
+    post:
+      tags:
+        - webhooks
+      summary: Twilio webhook
+      description: Receive Twilio webhook events
+      operationId: twilioWebhook
+      security: []
+      parameters:
+        - name: X-Twilio-Signature
+          in: header
+          required: true
+          description: Twilio signature for verification
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+        '400':
+          description: Invalid signature
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/webhooks/google:
+    post:
+      tags:
+        - webhooks
+      summary: Google webhook
+      description: Receive Google webhook events
+      operationId: googleWebhook
+      security: []
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer token for verification
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Webhook processed
+        '401':
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/scheduler/next:
+    get:
+      tags:
+        - scheduler
+      summary: Get next scheduled task
+      description: Retrieve the next scheduled task to execute
+      operationId: getNextTask
+      responses:
+        '200':
+          description: Next task found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduledTask'
+        '404':
+          description: No pending tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: nathan@rivercityclean.com
+        password:
+          type: string
+          format: password
+          example: password123
+
+    TokenPair:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+        - token_type
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        token_type:
+          type: string
+          example: bearer
+
+    LeadCreate:
+      type: object
+      required:
+        - contact_id
+        - source
+      properties:
+        contact_id:
+          type: string
+        source:
+          type: string
+        value:
+          type: number
+          format: float
+        notes:
+          type: string
+
+    LeadUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [new, contacted, qualified, proposal, negotiation, closed_won, closed_lost]
+        value:
+          type: number
+          format: float
+        notes:
+          type: string
+
+    LeadResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        contact_id:
+          type: string
+        status:
+          type: string
+        source:
+          type: string
+        value:
+          type: number
+          format: float
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    LeadWithContact:
+      allOf:
+        - $ref: '#/components/schemas/LeadResponse'
+        - type: object
+          properties:
+            contact:
+              $ref: '#/components/schemas/ContactResponse'
+
+    LeadBoard:
+      type: object
+      properties:
+        new:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+        contacted:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+        qualified:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+        proposal:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+        negotiation:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+        closed_won:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+        closed_lost:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadWithContact'
+
+    ContactCreate:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        company:
+          type: string
+        title:
+          type: string
+
+    ContactResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        company:
+          type: string
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ScheduledTask:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        scheduled_at:
+          type: string
+          format: date-time
+        retry_count:
+          type: integer
+        max_retries:
+          type: integer
+        payload:
+          type: object
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          example: Invalid email or password
+        error_code:
+          type: string
+          example: AUTH_001

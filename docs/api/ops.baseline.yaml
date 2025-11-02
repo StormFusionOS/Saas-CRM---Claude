@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: RiverCityClean Ops Console API
+  version: 0.1.0
+  description: |
+    Operations Console API for RiverCityClean SaaS platform.
+
+    This API provides endpoints for:
+    - System health monitoring
+    - Service status checks
+    - Alert management
+    - Database health
+    - Admin operations
+
+    **Base URL**: `/api/ops`
+
+    **Authentication**: Bearer token (JWT) with ops role
+
+    **Rate Limiting**: 100 requests per minute per client
+  contact:
+    name: RiverCityClean API Support
+    email: api@rivercityclean.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8001
+    description: Development server
+  - url: https://ops.rivercityclean.com
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: health
+    description: Health check endpoints
+  - name: monitoring
+    description: System monitoring
+  - name: database
+    description: Database operations
+  - name: alerts
+    description: Alert management
+
+paths:
+  /health:
+    get:
+      tags:
+        - health
+      summary: Health check
+      description: Basic health check endpoint
+      operationId: healthCheck
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: ops-api
+                  version:
+                    type: string
+                    example: 0.1.0
+
+  /api/ops/auth/login:
+    post:
+      tags:
+        - auth
+      summary: Ops user login
+      description: Authenticate ops user and return JWT token
+      operationId: opsLogin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: ops@rivercityclean.com
+              password: opspassword123
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ops/system/health:
+    get:
+      tags:
+        - monitoring
+      summary: Get system health
+      description: Retrieve health status of all system components
+      operationId: getSystemHealth
+      responses:
+        '200':
+          description: System health retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemHealth'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ops/services:
+    get:
+      tags:
+        - monitoring
+      summary: List services
+      description: Get list of all monitored services
+      operationId: listServices
+      responses:
+        '200':
+          description: Services retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceStatus'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ops/services/{service_name}:
+    get:
+      tags:
+        - monitoring
+      summary: Get service status
+      description: Retrieve detailed status for a specific service
+      operationId: getServiceStatus
+      parameters:
+        - name: service_name
+          in: path
+          required: true
+          description: Service name
+          schema:
+            type: string
+            example: api-gateway
+      responses:
+        '200':
+          description: Service status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceDetail'
+        '404':
+          description: Service not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ops/database/health:
+    get:
+      tags:
+        - database
+      summary: Database health check
+      description: Check database connectivity and health
+      operationId: checkDatabaseHealth
+      responses:
+        '200':
+          description: Database health retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseHealth'
+        '503':
+          description: Database unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ops/alerts:
+    get:
+      tags:
+        - alerts
+      summary: List alerts
+      description: Get list of active alerts
+      operationId: listAlerts
+      parameters:
+        - name: severity
+          in: query
+          description: Filter by severity
+          required: false
+          schema:
+            type: string
+            enum: [info, warning, error, critical]
+        - name: status
+          in: query
+          description: Filter by status
+          required: false
+          schema:
+            type: string
+            enum: [active, acknowledged, resolved]
+      responses:
+        '200':
+          description: Alerts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Alert'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - alerts
+      summary: Create alert
+      description: Create a new alert
+      operationId: createAlert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertCreate'
+      responses:
+        '201':
+          description: Alert created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ops/alerts/{alert_id}:
+    patch:
+      tags:
+        - alerts
+      summary: Update alert status
+      description: Acknowledge or resolve an alert
+      operationId: updateAlertStatus
+      parameters:
+        - name: alert_id
+          in: path
+          required: true
+          description: Alert ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [acknowledged, resolved]
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Alert updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+        '404':
+          description: Alert not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: ops@rivercityclean.com
+        password:
+          type: string
+          format: password
+          example: opspassword123
+
+    TokenPair:
+      type: object
+      required:
+        - access_token
+        - token_type
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        token_type:
+          type: string
+          example: bearer
+
+    SystemHealth:
+      type: object
+      properties:
+        overall_status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          example: healthy
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceStatus'
+        database:
+          $ref: '#/components/schemas/DatabaseHealth'
+        timestamp:
+          type: string
+          format: date-time
+
+    ServiceStatus:
+      type: object
+      properties:
+        name:
+          type: string
+          example: API Gateway
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          example: healthy
+        uptime:
+          type: string
+          example: 99.98%
+        latency:
+          type: string
+          example: 45ms
+        last_check:
+          type: string
+          format: date-time
+
+    ServiceDetail:
+      allOf:
+        - $ref: '#/components/schemas/ServiceStatus'
+        - type: object
+          properties:
+            metrics:
+              type: object
+              properties:
+                requests_per_second:
+                  type: number
+                  example: 125.5
+                error_rate:
+                  type: number
+                  example: 0.01
+                avg_response_time:
+                  type: number
+                  example: 45
+            endpoints:
+              type: array
+              items:
+                type: object
+                properties:
+                  path:
+                    type: string
+                  method:
+                    type: string
+                  status:
+                    type: string
+
+    DatabaseHealth:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+          example: healthy
+        connection_pool:
+          type: object
+          properties:
+            active:
+              type: integer
+              example: 5
+            idle:
+              type: integer
+              example: 10
+            max:
+              type: integer
+              example: 20
+        query_performance:
+          type: object
+          properties:
+            avg_query_time:
+              type: number
+              example: 12.5
+            slow_queries:
+              type: integer
+              example: 0
+        last_check:
+          type: string
+          format: date-time
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        severity:
+          type: string
+          enum: [info, warning, error, critical]
+        status:
+          type: string
+          enum: [active, acknowledged, resolved]
+        title:
+          type: string
+        description:
+          type: string
+        service:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        acknowledged_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type: string
+          format: date-time
+        notes:
+          type: string
+
+    AlertCreate:
+      type: object
+      required:
+        - severity
+        - title
+        - description
+      properties:
+        severity:
+          type: string
+          enum: [info, warning, error, critical]
+        title:
+          type: string
+        description:
+          type: string
+        service:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          example: Invalid credentials
+        error_code:
+          type: string
+          example: OPS_AUTH_001
