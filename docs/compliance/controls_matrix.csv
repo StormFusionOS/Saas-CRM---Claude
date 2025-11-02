@@ -1,0 +1,64 @@
+Control ID,Control Domain,Control Title,SOC2 CC,ISO 27001 Annex A,Implementation,Evidence Location,Status,Last Reviewed,Owner
+CC1.1,Control Environment,Demonstrates commitment to integrity and ethical values,CC1.1,A.7.1.1,Code of Conduct; Ethics training,docs/policies/code_of_conduct.md,Implemented,2025-11-01,Legal
+CC1.2,Control Environment,Board oversight,CC1.2,A.5.1.1,Board reviews quarterly,docs/policies/governance.md,Implemented,2025-11-01,Executive
+CC2.1,Communication,Internal communication,CC2.1,A.7.2.1,Slack channels; Weekly all-hands,docs/policies/communication.md,Implemented,2025-11-01,HR
+CC3.1,Risk Assessment,Risk identification,CC3.1,A.5.1.2,Annual risk assessment,docs/risk/risk_register.md,Implemented,2025-11-01,Security
+CC3.2,Risk Assessment,Risk analysis,CC3.2,A.5.1.2,Risk scoring matrix,docs/risk/risk_matrix.md,Implemented,2025-11-01,Security
+CC4.1,Monitoring,Performance monitoring,CC4.1,A.18.2.1,Observability system; Metrics dashboards,observability/,Implemented,2025-11-01,SRE
+CC5.1,Control Activities,Control activities,CC5.1,A.18.1.1,Automated testing; CI/CD gates,scripts/ci/,Implemented,2025-11-01,Engineering
+CC6.1,Logical Access,User access provisioning,CC6.1,A.9.2.1,IAM system; Role-based access,docs/security/iam_policy.md,Implemented,2025-11-01,Security
+CC6.2,Logical Access,User authentication,CC6.2,A.9.4.2,MFA required; Password policy,docs/security/auth_policy.md,Implemented,2025-11-01,Security
+CC6.3,Logical Access,Access removal,CC6.3,A.9.2.6,Automated offboarding,docs/security/offboarding.md,Implemented,2025-11-01,HR
+CC6.6,Logical Access,Encryption of data,CC6.6,A.10.1.1,Encryption at rest and in transit,crypto/,Implemented,2025-11-01,Security
+CC6.7,Logical Access,Encryption key management,CC6.7,A.10.1.2,KMS with key rotation,crypto/kms_stub.py,Implemented,2025-11-01,Security
+CC6.8,Logical Access,Segregation of duties,CC6.8,A.6.1.2,Approval workflows; Code review,docs/policies/approval_matrix.md,Implemented,2025-11-01,Security
+CC7.1,System Operations,Capacity planning,CC7.1,A.12.1.3,Load testing; Performance budgets,tools/perf/,Implemented,2025-11-01,SRE
+CC7.2,System Operations,System monitoring,CC7.2,A.12.1.1,24/7 monitoring; Alerting,observability/metrics.py,Implemented,2025-11-01,SRE
+CC7.3,System Operations,Data backup,CC7.3,A.12.3.1,Automated backups; 5-min RPO,scripts/dr/backup_snapshot.py,Implemented,2025-11-01,SRE
+CC7.4,System Operations,Disaster recovery,CC7.4,A.17.1.1,DR runbook; Monthly drills,docs/dr/runbook.md,Implemented,2025-11-01,SRE
+CC7.5,System Operations,System availability,CC7.5,A.17.2.1,99.9% SLO; Error budgets,docs/reliability/slos.md,Implemented,2025-11-01,SRE
+CC8.1,Change Management,Change approval,CC8.1,A.12.1.2,PR reviews; Approval required,docs/policies/change_management.md,Implemented,2025-11-01,Engineering
+CC9.1,Risk Mitigation,Vulnerability management,CC9.1,A.12.6.1,Dependency scanning; CVE tracking,supply-chain/sbom.py,Implemented,2025-11-01,Security
+CC9.2,Risk Mitigation,Security incidents,CC9.2,A.16.1.1,Incident response plan,docs/security/incident_response.md,Implemented,2025-11-01,Security
+A.5.1.1,Information Security Policies,Policies for information security,CC1.2,A.5.1.1,Security policy framework,docs/policies/security_policy.md,Implemented,2025-11-01,Security
+A.5.1.2,Information Security Policies,Review of policies,CC3.1,A.5.1.2,Annual policy review,docs/policies/policy_review.md,Implemented,2025-11-01,Compliance
+A.6.1.1,Organization of Information Security,Information security roles,CC1.1,A.6.1.1,RACI matrix,docs/policies/raci_matrix.md,Implemented,2025-11-01,Security
+A.6.1.2,Organization of Information Security,Segregation of duties,CC6.8,A.6.1.2,Role separation; Approval workflows,docs/policies/approval_matrix.md,Implemented,2025-11-01,Security
+A.7.1.1,Human Resource Security,Screening,CC1.1,A.7.1.1,Background checks,docs/policies/hr_screening.md,Implemented,2025-11-01,HR
+A.7.2.1,Human Resource Security,Management responsibilities,CC2.1,A.7.2.1,Manager training,docs/policies/manager_responsibilities.md,Implemented,2025-11-01,HR
+A.8.1.1,Asset Management,Inventory of assets,CC4.1,A.8.1.1,Asset register,docs/assets/asset_inventory.md,Implemented,2025-11-01,IT
+A.8.1.2,Asset Management,Ownership of assets,CC4.1,A.8.1.2,Asset owners defined,docs/assets/asset_owners.md,Implemented,2025-11-01,IT
+A.8.2.1,Asset Management,Classification of information,CC6.6,A.8.2.1,Data classification guide,docs/data/classification.md,Implemented,2025-11-01,Security
+A.8.2.3,Asset Management,Handling of assets,CC6.6,A.8.2.3,Handling procedures,docs/data/classification.md,Implemented,2025-11-01,Security
+A.9.1.1,Access Control,Access control policy,CC6.1,A.9.1.1,Access control policy,docs/security/access_policy.md,Implemented,2025-11-01,Security
+A.9.2.1,Access Control,User registration,CC6.1,A.9.2.1,User provisioning process,docs/security/provisioning.md,Implemented,2025-11-01,IT
+A.9.2.2,Access Control,User access provisioning,CC6.1,A.9.2.2,Role-based access control,docs/security/rbac.md,Implemented,2025-11-01,Security
+A.9.2.3,Access Control,Management of privileged access,CC6.1,A.9.2.3,Admin access controls,docs/security/privileged_access.md,Implemented,2025-11-01,Security
+A.9.2.6,Access Control,Access rights removal,CC6.3,A.9.2.6,Offboarding checklist,docs/security/offboarding.md,Implemented,2025-11-01,HR
+A.9.4.1,Access Control,Information access restriction,CC6.1,A.9.4.1,Need-to-know basis,docs/security/access_policy.md,Implemented,2025-11-01,Security
+A.9.4.2,Access Control,Secure log-on procedures,CC6.2,A.9.4.2,MFA enforcement,docs/security/auth_policy.md,Implemented,2025-11-01,Security
+A.10.1.1,Cryptography,Policy on use of cryptographic controls,CC6.6,A.10.1.1,Encryption policy,docs/security/encryption_policy.md,Implemented,2025-11-01,Security
+A.10.1.2,Cryptography,Key management,CC6.7,A.10.1.2,Key management procedure,crypto/kms_stub.py,Implemented,2025-11-01,Security
+A.12.1.1,Operations Security,Documented operating procedures,CC7.2,A.12.1.1,Operational runbooks,docs/,Implemented,2025-11-01,SRE
+A.12.1.2,Operations Security,Change management,CC8.1,A.12.1.2,Change management process,docs/policies/change_management.md,Implemented,2025-11-01,Engineering
+A.12.1.3,Operations Security,Capacity management,CC7.1,A.12.1.3,Capacity planning,docs/perf/budgets.md,Implemented,2025-11-01,SRE
+A.12.3.1,Operations Security,Information backup,CC7.3,A.12.3.1,Backup procedures,scripts/dr/backup_snapshot.py,Implemented,2025-11-01,SRE
+A.12.4.1,Operations Security,Event logging,CC4.1,A.12.4.1,Structured logging,observability/logger.py,Implemented,2025-11-01,SRE
+A.12.4.3,Operations Security,Administrator logs,CC4.1,A.12.4.3,Admin action logging,observability/logger.py,Implemented,2025-11-01,Security
+A.12.6.1,Operations Security,Management of vulnerabilities,CC9.1,A.12.6.1,Vulnerability scanning,supply-chain/sbom.py,Implemented,2025-11-01,Security
+A.14.2.1,System Development,Secure development policy,CC5.1,A.14.2.1,Secure coding standards,docs/security/secure_coding.md,Implemented,2025-11-01,Engineering
+A.14.2.5,System Development,Secure system principles,CC5.1,A.14.2.5,Security by design,docs/security/security_by_design.md,Implemented,2025-11-01,Security
+A.16.1.1,Incident Management,Responsibilities and procedures,CC9.2,A.16.1.1,Incident response plan,docs/security/incident_response.md,Implemented,2025-11-01,Security
+A.16.1.4,Incident Management,Assessment and decision,CC9.2,A.16.1.4,Incident severity matrix,docs/security/incident_severity.md,Implemented,2025-11-01,Security
+A.17.1.1,Business Continuity,Planning continuity,CC7.4,A.17.1.1,Business continuity plan,docs/dr/runbook.md,Implemented,2025-11-01,SRE
+A.17.2.1,Business Continuity,Availability of facilities,CC7.5,A.17.2.1,High availability architecture,docs/reliability/slos.md,Implemented,2025-11-01,SRE
+A.18.1.1,Compliance,Identification of applicable legislation,CC5.1,A.18.1.1,Legal compliance register,docs/compliance/legal_register.md,Implemented,2025-11-01,Legal
+A.18.1.4,Compliance,Privacy and protection of PII,CC6.6,A.18.1.4,Data protection procedures,docs/data/,Implemented,2025-11-01,Privacy
+A.18.2.1,Compliance,Independent review,CC4.1,A.18.2.1,Internal audit program,docs/compliance/audit_program.md,Implemented,2025-11-01,Compliance
+GDPR.Art5,Data Protection,Principles of data processing,CC6.6,A.18.1.4,Data minimization; Purpose limitation,docs/data/classification.md,Implemented,2025-11-01,Privacy
+GDPR.Art6,Data Protection,Lawfulness of processing,CC6.6,A.18.1.4,Legal basis documentation,consent/models.py,Implemented,2025-11-01,Privacy
+GDPR.Art15,Data Protection,Right of access,CC6.6,A.18.1.4,Data subject access workflow,scripts/data/dsr.py,Implemented,2025-11-01,Privacy
+GDPR.Art17,Data Protection,Right to erasure,CC6.6,A.18.1.4,Data deletion workflow,scripts/data/dsr.py,Implemented,2025-11-01,Privacy
+GDPR.Art25,Data Protection,Privacy by design,CC6.6,A.18.1.4,Privacy impact assessments,docs/data/classification.md,Implemented,2025-11-01,Privacy
+GDPR.Art32,Data Protection,Security of processing,CC6.6,A.10.1.1,Encryption; Access controls,crypto/,Implemented,2025-11-01,Security
+GDPR.Art33,Data Protection,Breach notification,CC9.2,A.16.1.1,72-hour breach notification,docs/security/incident_response.md,Implemented,2025-11-01,Security
