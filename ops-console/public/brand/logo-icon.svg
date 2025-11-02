@@ -1,10 +1,33 @@
-<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M30 10L45 18.66V35.34L30 44L15 35.34V18.66L30 10Z" stroke="url(#gradient)" stroke-width="2" fill="none"/>
-  <path d="M30 18L38 22.32V30.68L30 35L22 30.68V22.32L30 18Z" fill="url(#gradient)"/>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer hexagon with gradient -->
   <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#005AE0;stop-opacity:1" />
+    <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0080FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#005AE0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="innerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2332;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a3a4f;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00E5FF;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#00B7FD;stop-opacity:1" />
     </linearGradient>
   </defs>
+
+  <!-- Outer hexagon -->
+  <path d="M32 2 L54 14 L54 38 L32 50 L10 38 L10 14 Z" fill="url(#hexGradient)" />
+
+  <!-- Inner hexagon (dark background) -->
+  <path d="M32 8 L50 18 L50 34 L32 44 L14 34 L14 18 Z" fill="url(#innerGradient)" />
+
+  <!-- Lightning/Arrow symbol (top right) -->
+  <path d="M38 16 L42 22 L38 22 L40 28 L34 24 L38 24 Z" fill="url(#accentGradient)" stroke="url(#accentGradient)" stroke-width="0.5"/>
+
+  <!-- Flow line (left) -->
+  <path d="M20 24 L24 24 M26 24 L30 24" stroke="url(#accentGradient)" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="19" cy="24" r="2" fill="url(#accentGradient)"/>
+
+  <!-- Upward arrow (bottom right) -->
+  <path d="M40 36 L44 32 L44 38 M40 32 L40 38" stroke="url(#accentGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

@@ -41,8 +41,10 @@ def login(
     Raises:
         HTTPException: If credentials are invalid
     """
-    # Find user by email
-    user = db.query(User).filter(email=request.email).first()
+    # Find user by email (case-insensitive)
+    email_lower = request.email.lower()
+    users = db.query(User).all()
+    user = next((u for u in users if u.email.lower() == email_lower), None)
 
     if not user:
         raise HTTPException(

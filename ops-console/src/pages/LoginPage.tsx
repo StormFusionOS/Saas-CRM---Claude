@@ -38,10 +38,13 @@ const LoginPage: React.FC = () => {
            style={{ background: 'radial-gradient(circle at center, rgba(0, 183, 253, 0.15) 0%, rgba(10, 15, 28, 1) 70%)' }} />
 
       <Card variant="glass" padding="lg" className="max-w-md w-full relative z-10">
-        <h2 className="text-3xl font-display font-bold mb-2 text-center text-gradient">
-          Ops Console
-        </h2>
-        <p className="text-text-secondary text-center mb-8">Operations & Monitoring</p>
+        <div className="flex flex-col items-center mb-8">
+          <img src="/brand/logo-icon.svg" alt="StormFusion OS" className="w-20 h-20 mb-4" />
+          <h2 className="text-3xl font-display font-bold mb-2 text-center text-gradient">
+            StormFusion OS
+          </h2>
+          <p className="text-text-secondary text-center">Ops Console Login</p>
+        </div>
 
         {error && (
           <div className="bg-error/10 border border-error text-error p-3 rounded-base mb-6" role="alert">

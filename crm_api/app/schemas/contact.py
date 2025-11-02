@@ -76,6 +76,18 @@ class LeadUpdate(BaseModel):
     notes: Optional[str] = None
 
 
+class LeadStatusUpdate(BaseModel):
+    """Update lead status request."""
+
+    status: str
+
+
+class LeadAssignUpdate(BaseModel):
+    """Assign lead request."""
+
+    assigned_to_id: int
+
+
 class LeadResponse(LeadBase):
     """Lead response."""
 
@@ -123,7 +135,8 @@ class LeadBoard(BaseModel):
 
     new: List[LeadWithContact] = []
     contacted: List[LeadWithContact] = []
-    qualified: List[LeadWithContact] = []
+    quoted: List[LeadWithContact] = []
+    scheduled: List[LeadWithContact] = []
     won: List[LeadWithContact] = []
     lost: List[LeadWithContact] = []
 
@@ -136,6 +149,8 @@ __all__ = [
     "LeadBase",
     "LeadCreate",
     "LeadUpdate",
+    "LeadStatusUpdate",
+    "LeadAssignUpdate",
     "LeadResponse",
     "LeadWithContact",
     "InteractionBase",

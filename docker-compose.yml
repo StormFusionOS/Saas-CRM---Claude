@@ -25,7 +25,7 @@ services:
       POSTGRES_USER: ${CRM_DB_USER:-crm_user}
       POSTGRES_PASSWORD: ${CRM_DB_PASSWORD:-crm_password}
     ports:
-      - "${CRM_DB_PORT:-5433}:5432"
+      - "5433:5432"
     volumes:
       - crm-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -47,7 +47,7 @@ services:
       POSTGRES_USER: ${OPS_DB_USER:-ops_user}
       POSTGRES_PASSWORD: ${OPS_DB_PASSWORD:-ops_password}
     ports:
-      - "${OPS_DB_PORT:-5434}:5432"
+      - "5434:5432"
     volumes:
       - ops-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -107,7 +107,7 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-prod}
       - ACCESS_TOKEN_EXPIRE_SECONDS=${ACCESS_TOKEN_EXPIRE_SECONDS:-3600}
-      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:5173,http://localhost:80}
+      - CRM_CORS_ORIGINS=${CRM_CORS_ORIGINS:-http://localhost:5173,http://192.168.0.220:5173,http://localhost:80}
       - DEBUG=${DEBUG:-false}
     ports:
       - "8000:8000"

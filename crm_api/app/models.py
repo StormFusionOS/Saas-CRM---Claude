@@ -23,7 +23,8 @@ class LeadStatus(str, Enum):
 
     NEW = "NEW"
     CONTACTED = "CONTACTED"
-    QUALIFIED = "QUALIFIED"
+    QUOTED = "QUOTED"
+    SCHEDULED = "SCHEDULED"
     WON = "WON"
     LOST = "LOST"
 
@@ -139,11 +140,70 @@ class AutoReplyRule:
     updated_at: Optional[datetime] = None
 
 
+@dataclass
+class PricebookItem:
+    """Pricebook service item."""
+
+    id: int
+    name: str
+    description: str
+    unit: str  # e.g., "sq_ft", "linear_ft", "each"
+    base_price: float
+    formula: str  # e.g., "base_price * sq_ft", "base_price + (stories * 50)"
+    category: str = "general"  # house_wash, roof_wash, etc.
+    is_active: bool = True
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+
+@dataclass
+class Estimate:
+    """Estimate/Quote for a lead."""
+
+    id: int
+    lead_id: int
+    contact_id: int
+    service_ids: List[int]
+    inputs: dict  # e.g., {"sq_ft": 2500, "stories": 2}
+    good_tier: dict  # {"price": 299, "items": [...]}
+    better_tier: dict  # {"price": 399, "items": [...]}
+    best_tier: dict  # {"price": 499, "items": [...]}
+    selected_tier: Optional[str] = None  # "good", "better", "best"
+    deposit_amount: Optional[float] = None
+    deposit_due: Optional[datetime] = None
+    status: str = "draft"  # draft, sent, accepted, rejected
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = None
+    accepted_at: Optional[datetime] = None
+
+
+@dataclass
+class Job:
+    """Job created from accepted estimate."""
+
+    id: int
+    lead_id: int
+    estimate_id: int
+    contact_id: int
+    title: str
+    total_price: float
+    deposit_amount: float
+    deposit_paid: bool = False
+    status: str = "pending"  # pending, scheduled, in_progress, completed, cancelled
+    scheduled_date: Optional[datetime] = None
+    completed_date: Optional[datetime] = None
+    notes: str = ""
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = None
+
+
 # Auto-incrementing ID counters
 _contact_id_counter = 1
 _lead_id_counter = 1
 _interaction_id_counter = 1
 _auto_reply_rule_id_counter = 1
+_pricebook_item_id_counter = 1
+_estimate_id_counter = 1
+_job_id_counter = 1
 
 
 def get_next_contact_id() -> int:
@@ -178,12 +238,39 @@ def get_next_auto_reply_rule_id() -> int:
     return id
 
 
+def get_next_pricebook_item_id() -> int:
+    """Get next pricebook item ID."""
+    global _pricebook_item_id_counter
+    id = _pricebook_item_id_counter
+    _pricebook_item_id_counter += 1
+    return id
+
+
+def get_next_estimate_id() -> int:
+    """Get next estimate ID."""
+    global _estimate_id_counter
+    id = _estimate_id_counter
+    _estimate_id_counter += 1
+    return id
+
+
+def get_next_job_id() -> int:
+    """Get next job ID."""
+    global _job_id_counter
+    id = _job_id_counter
+    _job_id_counter += 1
+    return id
+
+
 __all__ = [
     "User",
     "Contact",
     "Lead",
     "Interaction",
     "AutoReplyRule",
+    "PricebookItem",
+    "Estimate",
+    "Job",
     "LeadStatus",
     "InteractionType",
     "LeadSource",
@@ -191,4 +278,7 @@ __all__ = [
     "get_next_lead_id",
     "get_next_interaction_id",
     "get_next_auto_reply_rule_id",
+    "get_next_pricebook_item_id",
+    "get_next_estimate_id",
+    "get_next_job_id",
 ]

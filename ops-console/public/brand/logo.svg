@@ -1,16 +1,36 @@
-<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="220" height="60" viewBox="0 0 220 60" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Hex icon -->
-  <path d="M30 10L45 18.66V35.34L30 44L15 35.34V18.66L30 10Z" stroke="url(#gradient)" stroke-width="2" fill="none"/>
-  <path d="M30 18L38 22.32V30.68L30 35L22 30.68V22.32L30 18Z" fill="url(#gradient)"/>
-
-  <!-- Text -->
-  <text x="55" y="35" fill="#FFFFFF" font-family="Sora, sans-serif" font-size="20" font-weight="600">RiverCityClean</text>
-
-  <!-- Gradient -->
   <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#005AE0;stop-opacity:1" />
+    <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0080FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#005AE0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="innerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2332;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a3a4f;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00E5FF;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#00B7FD;stop-opacity:1" />
     </linearGradient>
   </defs>
+
+  <!-- Outer hexagon -->
+  <path d="M30 5 L48 15 L48 35 L30 45 L12 35 L12 15 Z" fill="url(#hexGradient)" />
+
+  <!-- Inner hexagon -->
+  <path d="M30 10 L44 18 L44 32 L30 40 L16 32 L16 18 Z" fill="url(#innerGradient)" />
+
+  <!-- Lightning/Arrow symbol -->
+  <path d="M35 18 L38 23 L35 23 L37 28 L32 24 L35 24 Z" fill="url(#accentGradient)"/>
+
+  <!-- Flow line -->
+  <path d="M21 25 L24 25 M26 25 L29 25" stroke="url(#accentGradient)" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="20" cy="25" r="1.5" fill="url(#accentGradient)"/>
+
+  <!-- Upward arrow -->
+  <path d="M37 33 L40 30 L40 35 M37 30 L37 35" stroke="url(#accentGradient)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Text -->
+  <text x="58" y="35" fill="#FFFFFF" font-family="Sora, Inter, sans-serif" font-size="18" font-weight="700">StormFusion OS</text>
 </svg>
