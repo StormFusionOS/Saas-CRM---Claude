@@ -15,9 +15,9 @@ import uuid
 import traceback
 from typing import Callable
 from fastapi import Request, Response, status
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError, HTTPException
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import JSONResponse
 import structlog
 
 from app.core.errors import (
