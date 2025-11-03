@@ -24,8 +24,10 @@ class ServiceBase(BaseModel):
     description: str = Field(..., description="Service description")
     category: str = Field(..., description="Service category (e.g., house_wash, roof_wash)")
     base_price: float = Field(..., description="Base price for the service")
-    unit: str = Field(..., description="Unit of measurement (e.g., sq_ft, linear_ft, each)")
+    unit: str = Field(..., description="Unit of measurement (e.g., sq_ft, linear_ft, each, hour)")
+    min_price: Optional[float] = Field(None, description="Minimum price floor for this service")
     pricing_formula: Optional[str] = Field(None, description="Formula for calculating price")
+    modifiers: Dict[str, float] = Field(default_factory=dict, description="Optional pricing modifiers")
     is_active: bool = Field(True, description="Whether the service is active")
     display_order: int = Field(0, description="Display order in UI")
     metadata: Dict[str, str] = Field(default_factory=dict, description="Additional metadata")
@@ -45,7 +47,9 @@ class ServiceUpdate(BaseModel):
     category: Optional[str] = None
     base_price: Optional[float] = None
     unit: Optional[str] = None
+    min_price: Optional[float] = None
     pricing_formula: Optional[str] = None
+    modifiers: Optional[Dict[str, float]] = None
     is_active: Optional[bool] = None
     display_order: Optional[int] = None
     metadata: Optional[Dict[str, str]] = None

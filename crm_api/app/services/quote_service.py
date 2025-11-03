@@ -705,6 +705,136 @@ def get_service(db: InMemoryDB, service_id: int) -> Optional[Service]:
     return None
 
 
+def create_service(
+    db: InMemoryDB,
+    name: str,
+    description: str,
+    category: str,
+    base_price: float,
+    unit: str,
+    **kwargs
+) -> Service:
+    """
+    Create a new service in the catalog.
+
+    Args:
+        db: Database session
+        name: Service name
+        description: Service description
+        category: Service category
+        base_price: Base price
+        unit: Unit of measurement
+        **kwargs: Additional fields (min_price, pricing_formula, modifiers, etc.)
+
+    Returns:
+        Created service
+
+    Raises:
+        ValueError: If validation fails
+    """
+    from app.models import get_next_service_id
+
+    # Validate base_price
+    if base_price < 0:
+        raise ValueError("Base price cannot be negative")
+
+    # Validate min_price if provided
+    min_price = kwargs.get('min_price')
+    if min_price is not None and min_price < 0:
+        raise ValueError("Minimum price cannot be negative")
+
+    service = Service(
+        id=get_next_service_id(),
+        name=name,
+        description=description,
+        category=category,
+        base_price=base_price,
+        unit=unit,
+        min_price=min_price,
+        pricing_formula=kwargs.get('pricing_formula'),
+        modifiers=kwargs.get('modifiers', {}),
+        is_active=kwargs.get('is_active', True),
+        display_order=kwargs.get('display_order', 0),
+        metadata=kwargs.get('metadata', {}),
+        created_at=datetime.utcnow(),
+    )
+
+    db.add(service)
+    db.commit()
+
+    return service
+
+
+def update_service(
+    db: InMemoryDB,
+    service_id: int,
+    **updates
+) -> Optional[Service]:
+    """
+    Update a service in the catalog.
+
+    Args:
+        db: Database session
+        service_id: Service ID to update
+        **updates: Fields to update
+
+    Returns:
+        Updated service, or None if not found
+
+    Raises:
+        ValueError: If validation fails
+    """
+    service = get_service(db, service_id)
+    if not service:
+        return None
+
+    # Validate base_price if being updated
+    if 'base_price' in updates and updates['base_price'] < 0:
+        raise ValueError("Base price cannot be negative")
+
+    # Validate min_price if being updated
+    if 'min_price' in updates and updates['min_price'] is not None and updates['min_price'] < 0:
+        raise ValueError("Minimum price cannot be negative")
+
+    # Apply updates
+    for key, value in updates.items():
+        if hasattr(service, key) and value is not None:
+            setattr(service, key, value)
+
+    # Set updated_at timestamp
+    service.updated_at = datetime.utcnow()
+
+    db.commit()
+
+    return service
+
+
+def delete_service(db: InMemoryDB, service_id: int) -> bool:
+    """
+    Delete a service from the catalog.
+
+    Soft-deletes by setting is_active to False rather than removing from database.
+
+    Args:
+        db: Database session
+        service_id: Service ID to delete
+
+    Returns:
+        True if deleted, False if not found
+    """
+    service = get_service(db, service_id)
+    if not service:
+        return False
+
+    # Soft delete by marking as inactive
+    service.is_active = False
+    service.updated_at = datetime.utcnow()
+
+    db.commit()
+
+    return True
+
+
 # ============================================================================
 # Helper Functions
 # ============================================================================

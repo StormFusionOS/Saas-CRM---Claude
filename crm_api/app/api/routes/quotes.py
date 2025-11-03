@@ -562,8 +562,6 @@ def get_service(
 
     Raises:
         HTTPException: 404 if service not found
-
-    TODO: Implement service retrieval logic in quote_service.py
     """
     from app.services import quote_service
 
@@ -575,6 +573,136 @@ def get_service(
         )
 
     return ServiceResponse(**service.__dict__)
+
+
+@router.post("/services", response_model=ServiceResponse, status_code=status.HTTP_201_CREATED)
+def create_service(
+    service_data: ServiceCreate,
+    db: InMemoryDB = Depends(get_db),
+    claims: dict = Depends(require_sales_claims)
+) -> ServiceResponse:
+    """
+    Create a new service in the catalog.
+
+    Creates a new service that can be added to quotes.
+    Validates pricing constraints (base_price >= 0, min_price >= 0).
+
+    **Sales Suite Access Only** - Requires sales role claims.
+
+    Args:
+        service_data: Service creation data
+        db: Database session
+        claims: JWT claims with sales permissions
+
+    Returns:
+        Created service
+
+    Raises:
+        HTTPException: 400 if validation fails (negative prices, etc.)
+    """
+    from app.services import quote_service
+
+    try:
+        service = quote_service.create_service(
+            db=db,
+            name=service_data.name,
+            description=service_data.description,
+            category=service_data.category,
+            base_price=service_data.base_price,
+            unit=service_data.unit,
+            min_price=service_data.min_price,
+            pricing_formula=service_data.pricing_formula,
+            modifiers=service_data.modifiers,
+            is_active=service_data.is_active,
+            display_order=service_data.display_order,
+            metadata=service_data.metadata,
+        )
+
+        return ServiceResponse(**service.__dict__)
+
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.patch("/services/{service_id}", response_model=ServiceResponse)
+def update_service(
+    service_id: int,
+    service_update: ServiceUpdate,
+    db: InMemoryDB = Depends(get_db),
+    claims: dict = Depends(require_sales_claims)
+) -> ServiceResponse:
+    """
+    Update a service in the catalog.
+
+    Updates service details (name, pricing, category, etc.).
+    Validates pricing constraints if base_price or min_price are updated.
+
+    **Sales Suite Access Only** - Requires sales role claims.
+
+    Args:
+        service_id: Service ID to update
+        service_update: Fields to update
+        db: Database session
+        claims: JWT claims with sales permissions
+
+    Returns:
+        Updated service
+
+    Raises:
+        HTTPException: 404 if service not found
+        HTTPException: 400 if validation fails
+    """
+    from app.services import quote_service
+
+    try:
+        service = quote_service.update_service(
+            db=db,
+            service_id=service_id,
+            **service_update.dict(exclude_unset=True)
+        )
+
+        if not service:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Service {service_id} not found"
+            )
+
+        return ServiceResponse(**service.__dict__)
+
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.delete("/services/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_service(
+    service_id: int,
+    db: InMemoryDB = Depends(get_db),
+    claims: dict = Depends(require_sales_claims)
+) -> None:
+    """
+    Delete a service from the catalog.
+
+    Soft-deletes a service by setting is_active to False.
+    Does not actually remove the service from the database.
+
+    **Sales Suite Access Only** - Requires sales role claims.
+
+    Args:
+        service_id: Service ID to delete
+        db: Database session
+        claims: JWT claims with sales permissions
+
+    Raises:
+        HTTPException: 404 if service not found
+    """
+    from app.services import quote_service
+
+    success = quote_service.delete_service(db, service_id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Service {service_id} not found"
+        )
 
 
 __all__ = ["router"]

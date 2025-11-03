@@ -210,7 +210,7 @@ def get_db() -> Generator[InMemoryDB, None, None]:
 
 def init_demo_data():
     """Initialize demo data for testing."""
-    from app.models import User
+    from app.models import User, Service
     from app.core.security import hash_password, Role
 
     # Clear existing data
@@ -255,6 +255,81 @@ def init_demo_data():
     ]
 
     _users.extend(demo_users)
+
+    # Create demo services
+    demo_services = [
+        Service(
+            id=1,
+            name="House Wash",
+            description="Professional soft wash house cleaning service. Removes dirt, mold, and mildew from exterior surfaces.",
+            category="house_wash",
+            base_price=0.15,
+            unit="sq_ft",
+            min_price=199.00,
+            pricing_formula="base_price * sq_ft",
+            modifiers={
+                "two_story": 1.3,
+                "three_story": 1.5,
+                "heavy_staining": 1.2
+            },
+            is_active=True,
+            display_order=1,
+            metadata={
+                "typical_range": "2000-5000 sq ft",
+                "duration": "2-4 hours",
+                "eco_friendly": "true"
+            },
+            created_at=datetime.utcnow(),
+        ),
+        Service(
+            id=2,
+            name="Gutter Clean",
+            description="Complete gutter cleaning and debris removal. Includes downspout flushing and minor clog clearing.",
+            category="gutter_clean",
+            base_price=1.50,
+            unit="linear_ft",
+            min_price=149.00,
+            pricing_formula="base_price * linear_ft",
+            modifiers={
+                "two_story": 1.4,
+                "three_story": 1.7,
+                "heavily_clogged": 1.3
+            },
+            is_active=True,
+            display_order=2,
+            metadata={
+                "typical_range": "100-300 linear ft",
+                "duration": "1-3 hours",
+                "includes_downspouts": "true"
+            },
+            created_at=datetime.utcnow(),
+        ),
+        Service(
+            id=3,
+            name="Window Clean",
+            description="Interior and exterior window cleaning. Includes screens, sills, and frames.",
+            category="window_clean",
+            base_price=6.00,
+            unit="each",
+            min_price=99.00,
+            pricing_formula="base_price * quantity",
+            modifiers={
+                "exterior_only": 0.6,
+                "interior_only": 0.5,
+                "hard_water_stains": 1.3
+            },
+            is_active=True,
+            display_order=3,
+            metadata={
+                "typical_range": "15-40 windows",
+                "duration": "2-4 hours",
+                "includes_screens": "true"
+            },
+            created_at=datetime.utcnow(),
+        ),
+    ]
+
+    _services.extend(demo_services)
 
 
 # Initialize demo data on module load

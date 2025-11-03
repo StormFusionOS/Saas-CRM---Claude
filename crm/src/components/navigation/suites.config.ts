@@ -265,6 +265,13 @@ export const SUITES: Suite[] = [
         icon: 'receipt',
       },
       {
+        id: 'services',
+        label: 'Service Catalog',
+        route: '/sales/services',
+        icon: 'package',
+        description: 'Manage service offerings and pricing',
+      },
+      {
         id: 'quotes',
         label: 'Quotes & Invoices',
         route: '/quotes',

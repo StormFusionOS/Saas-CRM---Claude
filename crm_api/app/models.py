@@ -223,7 +223,9 @@ class Service:
     category: str  # e.g., "house_wash", "roof_wash", "window_cleaning"
     base_price: float
     unit: str  # e.g., "sq_ft", "linear_ft", "each", "hour"
+    min_price: Optional[float] = None  # Minimum price floor for this service
     pricing_formula: Optional[str] = None  # e.g., "base_price * sq_ft + (stories * 50)"
+    modifiers: dict = field(default_factory=dict)  # Optional pricing modifiers (e.g., {"difficulty": 1.2})
     is_active: bool = True
     display_order: int = 0
     metadata: dict = field(default_factory=dict)  # Additional service-specific data

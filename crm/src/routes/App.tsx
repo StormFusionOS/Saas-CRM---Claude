@@ -29,6 +29,7 @@ import SEODashboardPage from '../pages/SEODashboardPage';
 import ScrapeDashboardPage from '../pages/ScrapeDashboardPage';
 import SalesDashboardPage from '../pages/SalesDashboardPage';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
+import ServiceCatalogPage from '../pages/ServiceCatalogPage';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/seo/dashboard" element={<Shell><SEODashboardPage /></Shell>} />
           <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboardPage /></Shell>} />
           <Route path="/sales/dashboard" element={<Shell><SalesDashboardPage /></Shell>} />
+          <Route path="/sales/services" element={<Shell><ServiceCatalogPage /></Shell>} />
           <Route path="/admin/dashboard" element={<Shell><AdminDashboardPage /></Shell>} />
 
           {/* Legacy/General Routes */}
