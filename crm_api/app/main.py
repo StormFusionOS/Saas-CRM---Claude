@@ -20,7 +20,7 @@ Or with uvicorn (when using real FastAPI):
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import auth, leads, webhooks, pricebook, estimates
+from app.api.routes import auth, leads, webhooks, pricebook, estimates, quotes
 from app.middleware import RequestIDMiddleware, ErrorHandlerMiddleware
 import structlog
 
@@ -67,6 +67,10 @@ def create_app() -> FastAPI:
     app.include_router(scheduler.router, prefix=settings.API_PREFIX)
     app.include_router(pricebook.router, prefix=settings.API_PREFIX)
     app.include_router(estimates.router, prefix=settings.API_PREFIX)
+
+    # Quotes router - mounted under /sales scope as required
+    app.include_router(quotes.router, prefix=f"{settings.API_PREFIX}/sales")
+
     app.include_router(webhooks.router)  # No prefix for webhooks
 
     # Health check endpoint

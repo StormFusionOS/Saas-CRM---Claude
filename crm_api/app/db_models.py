@@ -201,6 +201,79 @@ class AutoReplyRuleModel(Base):
     updated_at = Column(DateTime, onupdate=datetime.utcnow)
 
 
+class ServiceModel(Base):
+    """SQLAlchemy Service model for migrations."""
+
+    __tablename__ = "services"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False)
+    description = Column(Text)
+    category = Column(String(100), index=True)
+    base_price = Column(Float, nullable=False)
+    unit = Column(String(50), nullable=False)
+    pricing_formula = Column(Text)
+    is_active = Column(Boolean, default=True, index=True)
+    display_order = Column(Integer, default=0)
+    metadata = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+
+
+class QuoteModel(Base):
+    """SQLAlchemy Quote model for migrations."""
+
+    __tablename__ = "quotes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    lead_id = Column(Integer, ForeignKey("leads.id"), nullable=False, index=True)
+    contact_id = Column(Integer, ForeignKey("contacts.id"), nullable=False, index=True)
+    quote_number = Column(String(50), unique=True, nullable=False, index=True)
+    title = Column(String(255), nullable=False)
+    status = Column(String(50), default="DRAFT", index=True)
+    subtotal = Column(Float, default=0.0)
+    discount_amount = Column(Float, default=0.0)
+    tax_amount = Column(Float, default=0.0)
+    total = Column(Float, default=0.0)
+    valid_until = Column(DateTime)
+    terms = Column(Text)
+    notes = Column(Text)
+    public_notes = Column(Text)
+    created_by_id = Column(Integer, ForeignKey("users.id"))
+    approved_by_id = Column(Integer, ForeignKey("users.id"))
+    sent_at = Column(DateTime)
+    viewed_at = Column(DateTime)
+    accepted_at = Column(DateTime)
+    rejected_at = Column(DateTime)
+    expired_at = Column(DateTime)
+    metadata = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+
+
+class QuoteItemModel(Base):
+    """SQLAlchemy QuoteItem model for migrations."""
+
+    __tablename__ = "quote_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    quote_id = Column(Integer, ForeignKey("quotes.id"), nullable=False, index=True)
+    service_id = Column(Integer, ForeignKey("services.id"), nullable=False)
+    service_name = Column(String(255), nullable=False)
+    description = Column(Text)
+    quantity = Column(Float, default=1.0)
+    unit_price = Column(Float, default=0.0)
+    subtotal = Column(Float, default=0.0)
+    discount_percent = Column(Float, default=0.0)
+    discount_amount = Column(Float, default=0.0)
+    tax_percent = Column(Float, default=0.0)
+    tax_amount = Column(Float, default=0.0)
+    total = Column(Float, default=0.0)
+    display_order = Column(Integer, default=0)
+    metadata = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 # Export models for Alembic
 __all__ = [
     "Base",
@@ -209,4 +282,7 @@ __all__ = [
     "LeadModel",
     "InteractionModel",
     "AutoReplyRuleModel",
+    "ServiceModel",
+    "QuoteModel",
+    "QuoteItemModel",
 ]

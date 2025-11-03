@@ -51,6 +51,19 @@ class LeadSource(str, Enum):
     API = "API"
 
 
+class QuoteStatus(str, Enum):
+    """Quote status lifecycle."""
+
+    DRAFT = "DRAFT"
+    PENDING = "PENDING"
+    SENT = "SENT"
+    VIEWED = "VIEWED"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
+    EXPIRED = "EXPIRED"
+    CANCELLED = "CANCELLED"
+
+
 @dataclass
 class User:
     """CRM user model."""
@@ -196,6 +209,87 @@ class Job:
     updated_at: Optional[datetime] = None
 
 
+@dataclass
+class Service:
+    """Service offering for quotes.
+
+    Represents a service that can be added to quotes.
+    More focused than PricebookItem - designed for the quoting engine.
+    """
+
+    id: int
+    name: str
+    description: str
+    category: str  # e.g., "house_wash", "roof_wash", "window_cleaning"
+    base_price: float
+    unit: str  # e.g., "sq_ft", "linear_ft", "each", "hour"
+    pricing_formula: Optional[str] = None  # e.g., "base_price * sq_ft + (stories * 50)"
+    is_active: bool = True
+    display_order: int = 0
+    metadata: dict = field(default_factory=dict)  # Additional service-specific data
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = None
+
+
+@dataclass
+class QuoteItem:
+    """Line item in a quote.
+
+    Represents a single service line item within a quote.
+    """
+
+    id: int
+    quote_id: int
+    service_id: int
+    service_name: str  # Snapshot of service name at time of quote
+    description: str
+    quantity: float = 1.0
+    unit_price: float = 0.0
+    subtotal: float = 0.0  # quantity * unit_price
+    discount_percent: float = 0.0
+    discount_amount: float = 0.0
+    tax_percent: float = 0.0
+    tax_amount: float = 0.0
+    total: float = 0.0  # subtotal - discount_amount + tax_amount
+    display_order: int = 0
+    metadata: dict = field(default_factory=dict)  # e.g., {"sq_ft": 2500, "stories": 2}
+    created_at: datetime = field(default_factory=datetime.utcnow)
+
+
+@dataclass
+class Quote:
+    """Formal quote/proposal for a lead.
+
+    Main quoting engine model. Represents a formal quote with line items,
+    pricing, terms, and lifecycle tracking.
+    """
+
+    id: int
+    lead_id: int
+    contact_id: int
+    quote_number: str  # e.g., "Q-2025-0001"
+    title: str
+    status: str = QuoteStatus.DRAFT.value
+    subtotal: float = 0.0
+    discount_amount: float = 0.0
+    tax_amount: float = 0.0
+    total: float = 0.0
+    valid_until: Optional[datetime] = None
+    terms: str = ""  # Payment terms, service terms, etc.
+    notes: str = ""  # Internal notes
+    public_notes: str = ""  # Notes visible to customer
+    created_by_id: Optional[int] = None
+    approved_by_id: Optional[int] = None
+    sent_at: Optional[datetime] = None
+    viewed_at: Optional[datetime] = None
+    accepted_at: Optional[datetime] = None
+    rejected_at: Optional[datetime] = None
+    expired_at: Optional[datetime] = None
+    metadata: dict = field(default_factory=dict)  # Flexible field for extensions
+    created_at: datetime = field(default_factory=datetime.utcnow)
+    updated_at: Optional[datetime] = None
+
+
 # Auto-incrementing ID counters
 _contact_id_counter = 1
 _lead_id_counter = 1
@@ -204,6 +298,9 @@ _auto_reply_rule_id_counter = 1
 _pricebook_item_id_counter = 1
 _estimate_id_counter = 1
 _job_id_counter = 1
+_service_id_counter = 1
+_quote_id_counter = 1
+_quote_item_id_counter = 1
 
 
 def get_next_contact_id() -> int:
@@ -262,6 +359,30 @@ def get_next_job_id() -> int:
     return id
 
 
+def get_next_service_id() -> int:
+    """Get next service ID."""
+    global _service_id_counter
+    id = _service_id_counter
+    _service_id_counter += 1
+    return id
+
+
+def get_next_quote_id() -> int:
+    """Get next quote ID."""
+    global _quote_id_counter
+    id = _quote_id_counter
+    _quote_id_counter += 1
+    return id
+
+
+def get_next_quote_item_id() -> int:
+    """Get next quote item ID."""
+    global _quote_item_id_counter
+    id = _quote_item_id_counter
+    _quote_item_id_counter += 1
+    return id
+
+
 __all__ = [
     "User",
     "Contact",
@@ -271,9 +392,13 @@ __all__ = [
     "PricebookItem",
     "Estimate",
     "Job",
+    "Service",
+    "Quote",
+    "QuoteItem",
     "LeadStatus",
     "InteractionType",
     "LeadSource",
+    "QuoteStatus",
     "get_next_contact_id",
     "get_next_lead_id",
     "get_next_interaction_id",
@@ -281,4 +406,7 @@ __all__ = [
     "get_next_pricebook_item_id",
     "get_next_estimate_id",
     "get_next_job_id",
+    "get_next_service_id",
+    "get_next_quote_id",
+    "get_next_quote_item_id",
 ]

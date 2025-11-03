@@ -173,17 +173,10 @@ export const SUITES: Suite[] = [
     items: [
       {
         id: 'scrape-dashboard',
-        label: 'Dashboard',
+        label: 'Scrape Dashboard',
         route: '/scrape/dashboard',
         icon: 'gauge',
         description: 'Scrape suite overview',
-      },
-      {
-        id: 'scrape-tools',
-        label: 'Scrape Tools',
-        route: '/scrape/dashboard',
-        icon: 'spider',
-        description: 'Web scraping tools',
       },
       {
         id: 'competitor-audit',

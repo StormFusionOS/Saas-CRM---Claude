@@ -34,6 +34,9 @@ _contacts = []
 _leads = []
 _interactions = []
 _auto_reply_rules = []
+_services = []
+_quotes = []
+_quote_items = []
 
 
 class InMemoryDB:
@@ -45,11 +48,14 @@ class InMemoryDB:
         self.leads = _leads
         self.interactions = _interactions
         self.auto_reply_rules = _auto_reply_rules
+        self.services = _services
+        self.quotes = _quotes
+        self.quote_items = _quote_items
         self._committed = True
 
     def add(self, obj):
         """Add object to appropriate collection."""
-        from app.models import User, Contact, Lead, Interaction, AutoReplyRule
+        from app.models import User, Contact, Lead, Interaction, AutoReplyRule, Service, Quote, QuoteItem
 
         if isinstance(obj, User):
             self.users.append(obj)
@@ -61,10 +67,16 @@ class InMemoryDB:
             self.interactions.append(obj)
         elif isinstance(obj, AutoReplyRule):
             self.auto_reply_rules.append(obj)
+        elif isinstance(obj, Service):
+            self.services.append(obj)
+        elif isinstance(obj, Quote):
+            self.quotes.append(obj)
+        elif isinstance(obj, QuoteItem):
+            self.quote_items.append(obj)
 
     def delete(self, obj):
         """Remove object from appropriate collection."""
-        from app.models import User, Contact, Lead, Interaction, AutoReplyRule
+        from app.models import User, Contact, Lead, Interaction, AutoReplyRule, Service, Quote, QuoteItem
 
         if isinstance(obj, User):
             self.users.remove(obj)
@@ -76,6 +88,12 @@ class InMemoryDB:
             self.interactions.remove(obj)
         elif isinstance(obj, AutoReplyRule):
             self.auto_reply_rules.remove(obj)
+        elif isinstance(obj, Service):
+            self.services.remove(obj)
+        elif isinstance(obj, Quote):
+            self.quotes.remove(obj)
+        elif isinstance(obj, QuoteItem):
+            self.quote_items.remove(obj)
 
     def commit(self):
         """Commit transaction (no-op in memory)."""
@@ -95,7 +113,7 @@ class InMemoryDB:
 
     def query(self, model):
         """Query helper."""
-        from app.models import User, Contact, Lead, Interaction, AutoReplyRule
+        from app.models import User, Contact, Lead, Interaction, AutoReplyRule, Service, Quote, QuoteItem
 
         if model == User:
             return QueryHelper(self.users)
@@ -107,6 +125,12 @@ class InMemoryDB:
             return QueryHelper(self.interactions)
         elif model == AutoReplyRule:
             return QueryHelper(self.auto_reply_rules)
+        elif model == Service:
+            return QueryHelper(self.services)
+        elif model == Quote:
+            return QueryHelper(self.quotes)
+        elif model == QuoteItem:
+            return QueryHelper(self.quote_items)
         else:
             return QueryHelper([])
 
@@ -195,6 +219,9 @@ def init_demo_data():
     _leads.clear()
     _interactions.clear()
     _auto_reply_rules.clear()
+    _services.clear()
+    _quotes.clear()
+    _quote_items.clear()
 
     # Create demo users
     demo_users = [
