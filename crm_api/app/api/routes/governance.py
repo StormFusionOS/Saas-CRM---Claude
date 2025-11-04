@@ -34,6 +34,7 @@ from app.schemas.governance import (
     ChangeLogExecute,
     ChangeLogRevert,
     ChangeLogResponse,
+    ChangeLogListResponse,
     TaskLogCreate,
     TaskLogUpdate,
     TaskLogResponse,
@@ -102,7 +103,7 @@ def create_change_log_entry(
     return change
 
 
-@router.get("/change-log", response_model=List[ChangeLogResponse])
+@router.get("/change-log", response_model=ChangeLogListResponse)
 def list_change_log(
     status: Optional[str] = Query(None, description="Filter by status"),
     module: Optional[str] = Query(None, description="Filter by module"),
@@ -121,6 +122,7 @@ def list_change_log(
     - rejected: Denied suggestions
     - reverted: Rolled back changes
     """
+    # Build base query for filtering
     query = db.query(ChangeLogModel)
 
     if status:
@@ -128,6 +130,9 @@ def list_change_log(
 
     if module:
         query = query.filter(ChangeLogModel.module == module)
+
+    # Get total count (before pagination)
+    total = query.count()
 
     # Sort by created_at desc (newest first)
     query = query.order_by(ChangeLogModel.created_at.desc())
@@ -137,9 +142,9 @@ def list_change_log(
 
     results = query.all()
 
-    logger.debug("list_change_log", count=len(results), status=status, module=module)
+    logger.debug("list_change_log", count=len(results), total=total, status=status, module=module)
 
-    return results
+    return {"changes": results, "total": total}
 
 
 @router.get("/change-log/{change_id}", response_model=ChangeLogResponse)

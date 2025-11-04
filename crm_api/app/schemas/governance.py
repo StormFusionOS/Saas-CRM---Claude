@@ -116,6 +116,12 @@ class ChangeLogResponse(BaseModel):
         from_attributes = True  # Enable ORM mode for SQLAlchemy models
 
 
+class ChangeLogListResponse(BaseModel):
+    """Paginated response schema for change log list."""
+    changes: List[ChangeLogResponse]
+    total: int
+
+
 # ==============================================================================
 # TaskLog Schemas
 # ==============================================================================
@@ -327,6 +333,7 @@ __all__ = [
     "ChangeLogExecute",
     "ChangeLogRevert",
     "ChangeLogResponse",
+    "ChangeLogListResponse",
 
     # TaskLog
     "TaskLogCreate",

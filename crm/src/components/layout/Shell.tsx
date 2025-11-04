@@ -97,16 +97,16 @@ const Shell: React.FC<ShellProps> = ({ children }) => {
       {/* Header */}
       <header className="glass-surface border-b border-white/5 sticky top-0 z-30 h-16 flex items-center px-4 gap-4">
         {/* Logo */}
-        <div className="flex items-center gap-3 min-w-[200px]">
-          <img src="/brand/logo-icon.svg" alt="StormFusion OS" className="w-8 h-8" />
-          <span className="text-lg font-display font-bold text-gradient hidden md:block">
+        <div className="flex items-center gap-0 min-w-[200px]">
+          <img src="/brand/logo-icon.svg" alt="StormFusion OS" className="w-[74px] h-[74px]" />
+          <span className="text-2xl font-display font-bold text-gradient hidden md:block">
             StormFusion OS
           </span>
         </div>
 
         {/* Global Search */}
-        <div className="flex-1 max-w-2xl">
-          <div className="relative">
+        <div className="flex-1 flex justify-center">
+          <div className="relative w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl">
             <input
               type="text"
               placeholder="Search or press Cmd+K..."

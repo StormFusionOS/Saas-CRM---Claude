@@ -7,6 +7,7 @@
 
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '../lib/auth-context';
+import { PWAProvider } from '../components/pwa/PWAProvider';
 import Shell from '../components/layout/Shell';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
@@ -35,48 +36,50 @@ import CompliancePage from '../pages/CompliancePage';
 // AI Suite Pages
 import AIGovernancePage from '../pages/AIGovernancePage';
 import AIJobsPage from '../pages/AIJobsPage';
-import AIPromptsPage from '../pages/AIPromptsPage';
 import AIContextPage from '../pages/AIContextPage';
+import PromptRunnerPage from '../pages/PromptRunnerPage';
 
 function App() {
   return (
     <div data-theme="dark">
       <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
+        <PWAProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
 
-          {/* Suite Dashboards */}
-          <Route path="/ai/dashboard" element={<Shell><AIDashboardPage /></Shell>} />
-          <Route path="/ai" element={<Shell><AIDashboardPage /></Shell>} />
-          <Route path="/ai/governance" element={<Shell><AIGovernancePage /></Shell>} />
-          <Route path="/ai/jobs" element={<Shell><AIJobsPage /></Shell>} />
-          <Route path="/ai/prompts" element={<Shell><AIPromptsPage /></Shell>} />
-          <Route path="/ai/context" element={<Shell><AIContextPage /></Shell>} />
-          <Route path="/seo/dashboard" element={<Shell><SEODashboardPage /></Shell>} />
-          <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboardPage /></Shell>} />
-          <Route path="/sales/dashboard" element={<Shell><SalesDashboardPage /></Shell>} />
-          <Route path="/sales/services" element={<Shell><ServiceCatalogPage /></Shell>} />
-          <Route path="/sales/formulas" element={<Shell><FormulaTestingPage /></Shell>} />
-          <Route path="/admin/dashboard" element={<Shell><AdminDashboardPage /></Shell>} />
-          <Route path="/admin/compliance" element={<Shell><CompliancePage /></Shell>} />
+            {/* Suite Dashboards */}
+            <Route path="/ai/dashboard" element={<Shell><AIDashboardPage /></Shell>} />
+            <Route path="/ai" element={<Shell><AIDashboardPage /></Shell>} />
+            <Route path="/ai/governance" element={<Shell><AIGovernancePage /></Shell>} />
+            <Route path="/ai/jobs" element={<Shell><AIJobsPage /></Shell>} />
+            <Route path="/ai/prompt-runner" element={<Shell><PromptRunnerPage /></Shell>} />
+            <Route path="/ai/context" element={<Shell><AIContextPage /></Shell>} />
+            <Route path="/seo/dashboard" element={<Shell><SEODashboardPage /></Shell>} />
+            <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboardPage /></Shell>} />
+            <Route path="/sales/dashboard" element={<Shell><SalesDashboardPage /></Shell>} />
+            <Route path="/sales/services" element={<Shell><ServiceCatalogPage /></Shell>} />
+            <Route path="/sales/formulas" element={<Shell><FormulaTestingPage /></Shell>} />
+            <Route path="/admin/dashboard" element={<Shell><AdminDashboardPage /></Shell>} />
+            <Route path="/admin/compliance" element={<Shell><CompliancePage /></Shell>} />
 
-          {/* Legacy/General Routes */}
-          <Route path="/dashboard" element={<Shell><DashboardPage /></Shell>} />
-          <Route path="/leads" element={<Shell><LeadsPage /></Shell>} />
-          <Route path="/estimator" element={<Shell><EstimatorPage /></Shell>} />
-          <Route path="/inbox" element={<Shell><InboxPage /></Shell>} />
-          <Route path="/quotes" element={<Shell><QuotesInvoicesPage /></Shell>} />
-          <Route path="/calendar" element={<Shell><CalendarPage /></Shell>} />
-          <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
-          <Route path="/seo" element={<Shell><SEOPage /></Shell>} />
-          <Route path="/health" element={<Shell><HealthPage /></Shell>} />
-          <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
-          <Route path="/pwa" element={<Shell><PWAView /></Shell>} />
-          <Route path="/client-portal" element={<Shell><ClientPortalPreview /></Shell>} />
-          <Route path="/visual-check" element={<Shell><VisualCheckPage /></Shell>} />
-          <Route path="/nav-demo" element={<NavDemoPage />} />
-          <Route path="/" element={<Navigate to="/sales/dashboard" replace />} />
-        </Routes>
+            {/* Legacy/General Routes */}
+            <Route path="/dashboard" element={<Shell><DashboardPage /></Shell>} />
+            <Route path="/leads" element={<Shell><LeadsPage /></Shell>} />
+            <Route path="/estimator" element={<Shell><EstimatorPage /></Shell>} />
+            <Route path="/inbox" element={<Shell><InboxPage /></Shell>} />
+            <Route path="/quotes" element={<Shell><QuotesInvoicesPage /></Shell>} />
+            <Route path="/calendar" element={<Shell><CalendarPage /></Shell>} />
+            <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
+            <Route path="/seo" element={<Shell><SEOPage /></Shell>} />
+            <Route path="/health" element={<Shell><HealthPage /></Shell>} />
+            <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
+            <Route path="/pwa" element={<Shell><PWAView /></Shell>} />
+            <Route path="/client-portal" element={<Shell><ClientPortalPreview /></Shell>} />
+            <Route path="/visual-check" element={<Shell><VisualCheckPage /></Shell>} />
+            <Route path="/nav-demo" element={<NavDemoPage />} />
+            <Route path="/" element={<Navigate to="/sales/dashboard" replace />} />
+          </Routes>
+        </PWAProvider>
       </AuthProvider>
     </div>
   );

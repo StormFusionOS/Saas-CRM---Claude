@@ -130,6 +130,10 @@ def create_app() -> FastAPI:
     from app.api.routes import ai_jobs
     app.include_router(ai_jobs.router, prefix=settings.API_PREFIX)
 
+    # Prompt Runner router - Deep research prompts with OpenAI and knowledge base (staff endpoints)
+    from app.api.routes import prompt_runner
+    app.include_router(prompt_runner.router, prefix=settings.API_PREFIX)
+
     app.include_router(webhooks.router)  # No prefix for webhooks
 
     # Health check endpoint
