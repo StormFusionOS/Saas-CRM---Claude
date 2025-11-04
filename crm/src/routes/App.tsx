@@ -30,6 +30,13 @@ import ScrapeDashboardPage from '../pages/ScrapeDashboardPage';
 import SalesDashboardPage from '../pages/SalesDashboardPage';
 import AdminDashboardPage from '../pages/AdminDashboardPage';
 import ServiceCatalogPage from '../pages/ServiceCatalogPage';
+import FormulaTestingPage from '../pages/FormulaTestingPage';
+import CompliancePage from '../pages/CompliancePage';
+// AI Suite Pages
+import AIGovernancePage from '../pages/AIGovernancePage';
+import AIJobsPage from '../pages/AIJobsPage';
+import AIPromptsPage from '../pages/AIPromptsPage';
+import AIContextPage from '../pages/AIContextPage';
 
 function App() {
   return (
@@ -40,11 +47,18 @@ function App() {
 
           {/* Suite Dashboards */}
           <Route path="/ai/dashboard" element={<Shell><AIDashboardPage /></Shell>} />
+          <Route path="/ai" element={<Shell><AIDashboardPage /></Shell>} />
+          <Route path="/ai/governance" element={<Shell><AIGovernancePage /></Shell>} />
+          <Route path="/ai/jobs" element={<Shell><AIJobsPage /></Shell>} />
+          <Route path="/ai/prompts" element={<Shell><AIPromptsPage /></Shell>} />
+          <Route path="/ai/context" element={<Shell><AIContextPage /></Shell>} />
           <Route path="/seo/dashboard" element={<Shell><SEODashboardPage /></Shell>} />
           <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboardPage /></Shell>} />
           <Route path="/sales/dashboard" element={<Shell><SalesDashboardPage /></Shell>} />
           <Route path="/sales/services" element={<Shell><ServiceCatalogPage /></Shell>} />
+          <Route path="/sales/formulas" element={<Shell><FormulaTestingPage /></Shell>} />
           <Route path="/admin/dashboard" element={<Shell><AdminDashboardPage /></Shell>} />
+          <Route path="/admin/compliance" element={<Shell><CompliancePage /></Shell>} />
 
           {/* Legacy/General Routes */}
           <Route path="/dashboard" element={<Shell><DashboardPage /></Shell>} />

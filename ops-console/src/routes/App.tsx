@@ -12,6 +12,8 @@ import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import SystemHealth from '../pages/SystemHealth';
 import VisualCheckPage from '../pages/VisualCheckPage';
+import GovernanceDashboard from '../pages/GovernanceDashboard';
+import ReviewQueuePage from '../pages/ReviewQueuePage';
 
 function App() {
   return (
@@ -22,7 +24,12 @@ function App() {
           <Route path="/dashboard" element={<Layout><DashboardPage /></Layout>} />
           <Route path="/health" element={<Layout><SystemHealth /></Layout>} />
           <Route path="/visual-check" element={<Layout><VisualCheckPage /></Layout>} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+          {/* Governance Routes */}
+          <Route path="/governance" element={<Layout><GovernanceDashboard /></Layout>} />
+          <Route path="/governance/review-queue" element={<Layout><ReviewQueuePage /></Layout>} />
+
+          <Route path="/" element={<Navigate to="/governance" replace />} />
         </Routes>
       </AuthProvider>
     </div>

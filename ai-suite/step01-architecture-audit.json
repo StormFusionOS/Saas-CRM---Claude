@@ -1,0 +1,440 @@
+{
+  "audit_date": "2025-11-03",
+  "diagram": {
+    "components": [
+      {
+        "name": "CRM Frontend",
+        "type": "react_spa",
+        "tech": "React 18 + TypeScript + Vite",
+        "port": 5173,
+        "purpose": "Main CRM interface with AI/SEO/Scrape/Sales/Admin suites"
+      },
+      {
+        "name": "Ops Console",
+        "type": "react_pwa",
+        "tech": "React 18 + TypeScript + Vite",
+        "port": 5174,
+        "purpose": "Technician mobile PWA for field operations"
+      },
+      {
+        "name": "CRM API",
+        "type": "fastapi_service",
+        "tech": "FastAPI + Python 3.9+ + Pydantic",
+        "port": 8000,
+        "purpose": "CRM business logic, quotes, payments, consent, formulas"
+      },
+      {
+        "name": "Ops API",
+        "type": "fastapi_service",
+        "tech": "FastAPI + Python 3.9+",
+        "port": 8001,
+        "purpose": "Operations/field service logic"
+      },
+      {
+        "name": "CRM Database",
+        "type": "postgres",
+        "tech": "PostgreSQL 15",
+        "port": 5433,
+        "purpose": "PLANNED - Currently using in-memory storage"
+      },
+      {
+        "name": "Ops Database",
+        "type": "postgres",
+        "tech": "PostgreSQL 15",
+        "port": 5434,
+        "purpose": "PLANNED - Operations data"
+      },
+      {
+        "name": "Redis",
+        "type": "cache_queue",
+        "tech": "Redis 7",
+        "port": 6379,
+        "purpose": "PLANNED - Caching and Celery queues (not yet utilized)"
+      },
+      {
+        "name": "AI Service",
+        "type": "ai_worker",
+        "tech": "MISSING",
+        "port": null,
+        "purpose": "NEEDED - LangChain service for SEO automation"
+      },
+      {
+        "name": "Vector DB",
+        "type": "vector_store",
+        "tech": "MISSING",
+        "port": null,
+        "purpose": "NEEDED - Qdrant/Pinecone for RAG embeddings"
+      },
+      {
+        "name": "SERP Crawler",
+        "type": "scraper_worker",
+        "tech": "MISSING",
+        "port": null,
+        "purpose": "NEEDED - SERP position tracking, backlink discovery"
+      },
+      {
+        "name": "Job Scheduler",
+        "type": "task_queue",
+        "tech": "MISSING",
+        "port": null,
+        "purpose": "NEEDED - Celery/cron for automated AI jobs"
+      },
+      {
+        "name": "WordPress MU Plugin",
+        "type": "integration",
+        "tech": "MISSING",
+        "port": null,
+        "purpose": "NEEDED - Content deployment to WordPress sites"
+      }
+    ],
+    "edges": [
+      {"from": "CRM Frontend", "to": "CRM API", "protocol": "HTTP/REST", "auth": "JWT"},
+      {"from": "Ops Console", "to": "Ops API", "protocol": "HTTP/REST", "auth": "JWT"},
+      {"from": "CRM API", "to": "CRM Database", "protocol": "PostgreSQL", "status": "PENDING"},
+      {"from": "Ops API", "to": "Ops Database", "protocol": "PostgreSQL", "status": "PENDING"},
+      {"from": "CRM API", "to": "Redis", "protocol": "Redis Protocol", "status": "PLANNED"},
+      {"from": "AI Service", "to": "CRM API", "protocol": "HTTP/REST", "status": "NEEDED"},
+      {"from": "AI Service", "to": "Vector DB", "protocol": "gRPC/HTTP", "status": "NEEDED"},
+      {"from": "Job Scheduler", "to": "AI Service", "protocol": "Celery Tasks", "status": "NEEDED"},
+      {"from": "SERP Crawler", "to": "CRM Database", "protocol": "PostgreSQL", "status": "NEEDED"},
+      {"from": "WordPress MU Plugin", "to": "CRM API", "protocol": "HTTP/REST + Webhooks", "status": "NEEDED"}
+    ]
+  },
+  "data_model_notes": [
+    {
+      "category": "CRM Core",
+      "tables_collections": [
+        "_users (in-memory)",
+        "_contacts (in-memory)",
+        "_leads (in-memory)",
+        "_interactions (in-memory)"
+      ],
+      "status": "EXISTS",
+      "migration_needed": "Move to PostgreSQL with proper schema"
+    },
+    {
+      "category": "Sales & Quotes",
+      "tables_collections": [
+        "_services (in-memory)",
+        "_quotes (in-memory)",
+        "_quote_items (in-memory)",
+        "_proposal_templates (in-memory)"
+      ],
+      "status": "EXISTS",
+      "migration_needed": "Move to PostgreSQL"
+    },
+    {
+      "category": "Payments & Finance",
+      "tables_collections": [
+        "_payment_methods (in-memory)",
+        "_payments (in-memory)",
+        "_refunds (in-memory)",
+        "_deposit_requests (in-memory)"
+      ],
+      "status": "EXISTS",
+      "migration_needed": "Move to PostgreSQL with PCI compliance considerations"
+    },
+    {
+      "category": "Compliance",
+      "tables_collections": [
+        "consent_records (in-memory)",
+        "consent_history (in-memory)",
+        "gdpr_requests (in-memory)"
+      ],
+      "status": "EXISTS",
+      "migration_needed": "Move to PostgreSQL with retention policies"
+    },
+    {
+      "category": "AI/SEO Governance - MISSING",
+      "tables_collections": [
+        "change_log",
+        "task_logs",
+        "audit_issues"
+      ],
+      "status": "MISSING",
+      "migration_needed": "CREATE - Critical for AI governance and review mode"
+    },
+    {
+      "category": "SEO Data - MISSING",
+      "tables_collections": [
+        "serp_keywords",
+        "serp_rankings",
+        "serp_snapshots",
+        "backlinks",
+        "citations",
+        "page_metrics",
+        "content_clusters"
+      ],
+      "status": "MISSING",
+      "migration_needed": "CREATE - Foundation for AI-SEO automation"
+    },
+    {
+      "category": "AI Prompts & RAG - MISSING",
+      "tables_collections": [
+        "prompt_templates",
+        "prompt_executions",
+        "embeddings",
+        "rag_documents"
+      ],
+      "status": "MISSING",
+      "migration_needed": "CREATE - AI prompt library and RAG system"
+    },
+    {
+      "category": "Automation - MISSING",
+      "tables_collections": [
+        "anomalies",
+        "auto_suggestions",
+        "content_generations",
+        "schema_markup"
+      ],
+      "status": "MISSING",
+      "migration_needed": "CREATE - AI automation outputs"
+    }
+  ],
+  "jobs": [
+    {
+      "name": "serp_position_scraper",
+      "when": "daily 03:00 UTC",
+      "inputs": ["tracked_keywords", "target_domains"],
+      "outputs": ["serp_rankings", "serp_snapshots", "anomalies"],
+      "status": "NEEDED",
+      "purpose": "Track keyword rankings and detect rank drops/gains"
+    },
+    {
+      "name": "backlink_discovery",
+      "when": "weekly Sunday 04:00 UTC",
+      "inputs": ["target_domains"],
+      "outputs": ["backlinks", "citations", "audit_issues"],
+      "status": "NEEDED",
+      "purpose": "Discover new backlinks and citation opportunities"
+    },
+    {
+      "name": "anomaly_analyzer",
+      "when": "daily 05:00 UTC (after SERP scrape)",
+      "inputs": ["serp_rankings", "page_metrics"],
+      "outputs": ["anomalies", "auto_suggestions", "change_log"],
+      "status": "NEEDED",
+      "purpose": "Detect traffic/rank anomalies and generate AI explanations"
+    },
+    {
+      "name": "ctr_optimizer",
+      "when": "weekly Monday 06:00 UTC",
+      "inputs": ["page_metrics", "serp_snapshots"],
+      "outputs": ["auto_suggestions (meta titles/descriptions)", "change_log"],
+      "status": "NEEDED",
+      "purpose": "Generate AI-powered meta tag improvements for CTR"
+    },
+    {
+      "name": "content_cluster_builder",
+      "when": "monthly 1st 07:00 UTC",
+      "inputs": ["serp_keywords", "page_metrics"],
+      "outputs": ["content_clusters", "internal_link_suggestions", "change_log"],
+      "status": "NEEDED",
+      "purpose": "Build topical content clusters and internal linking maps"
+    },
+    {
+      "name": "schema_generator",
+      "when": "on_demand + daily 08:00 UTC",
+      "inputs": ["page_content", "faq_data"],
+      "outputs": ["schema_markup", "change_log"],
+      "status": "NEEDED",
+      "purpose": "Generate JSON-LD schema markup for pages"
+    },
+    {
+      "name": "review_queue_processor",
+      "when": "continuous (event-driven)",
+      "inputs": ["change_log (pending)"],
+      "outputs": ["change_log (approved/rejected)", "task_logs"],
+      "status": "NEEDED",
+      "purpose": "Process human approvals/rejections from review queue"
+    },
+    {
+      "name": "change_executor",
+      "when": "continuous (event-driven on approval)",
+      "inputs": ["change_log (approved)"],
+      "outputs": ["deployed changes", "task_logs", "rollback_refs"],
+      "status": "NEEDED",
+      "purpose": "Execute approved changes to WordPress/CMS"
+    },
+    {
+      "name": "health_monitor",
+      "when": "every 5 minutes",
+      "inputs": ["all services", "databases", "job statuses"],
+      "outputs": ["system_health", "alerts"],
+      "status": "PARTIALLY_EXISTS",
+      "purpose": "Monitor system health and job failures"
+    },
+    {
+      "name": "materialized_view_refresh",
+      "when": "hourly",
+      "inputs": ["CRM tables", "SEO tables"],
+      "outputs": ["unified_interactions", "review_queue", "seo_overview_by_page"],
+      "status": "NEEDED",
+      "purpose": "Refresh read-model views for dashboard performance"
+    }
+  ],
+  "risks": [
+    {
+      "item": "In-memory storage for production data",
+      "why": "All CRM data (_users, _contacts, _leads, _payments, consent) is stored in Python lists/dicts",
+      "impact": "CRITICAL - Data loss on restart, no persistence, no ACID guarantees",
+      "mitigation": "P0: Migrate to PostgreSQL with SQLAlchemy ORM. Use Alembic for migrations. ETA: 16-24 hours"
+    },
+    {
+      "item": "No governance layer for AI suggestions",
+      "why": "Missing change_log, task_logs, audit_issues tables and state machine",
+      "impact": "HIGH - AI could push changes to production without approval/audit trail",
+      "mitigation": "P0: Implement Step 02 (Data Model) and Step 03 (Governance) before any AI automation. ETA: 12 hours"
+    },
+    {
+      "item": "No job scheduler for AI automation",
+      "why": "Redis present but Celery not configured. No cron jobs defined",
+      "impact": "HIGH - Cannot run SERP scraping, anomaly detection, or automated workflows",
+      "mitigation": "P1: Set up Celery workers with Redis broker. Define job schedules. ETA: 8 hours"
+    },
+    {
+      "item": "Secrets in environment variables",
+      "why": "SECRET_KEY, DB passwords in .env files and docker-compose.yml",
+      "impact": "MEDIUM - Secrets visible in process list, logs, and version control",
+      "mitigation": "P1: Use HashiCorp Vault or AWS Secrets Manager. Rotate all secrets. ETA: 6 hours"
+    },
+    {
+      "item": "No observability stack",
+      "why": "Basic health checks exist but no structured logging, metrics, or tracing",
+      "impact": "MEDIUM - Blind to AI job failures, performance issues, and errors in production",
+      "mitigation": "P2: Add Prometheus + Grafana for metrics, ELK/Loki for logs. Sentry for errors. ETA: 8 hours"
+    },
+    {
+      "item": "No backup or disaster recovery",
+      "why": "No backup procedures, no point-in-time recovery, no failover",
+      "impact": "CRITICAL - Catastrophic data loss if database corruption or deletion",
+      "mitigation": "P0: Implement Step 14 (Backups/DR). Daily automated backups to S3. ETA: 6 hours"
+    },
+    {
+      "item": "Missing AI infrastructure",
+      "why": "No LangChain service, no vector DB (Qdrant/Pinecone), no embedding workers",
+      "impact": "HIGH - Cannot implement RAG, prompt library, or AI-powered SEO features",
+      "mitigation": "P1: Deploy Step 04 (Retrieval Wrapper). Use Qdrant for vectors. ETA: 12 hours"
+    },
+    {
+      "item": "No WordPress integration",
+      "why": "WordPress MU plugin not implemented for content deployment",
+      "impact": "MEDIUM - AI suggestions cannot be deployed to client WordPress sites",
+      "mitigation": "P2: Implement Step 15 (WP MU Plugin). Webhook-based deployment. ETA: 16 hours"
+    },
+    {
+      "item": "Review vs Auto mode toggle missing",
+      "why": "No configuration for per-module review/auto mode switching",
+      "impact": "HIGH - Cannot gradually graduate modules from manual review to automation",
+      "mitigation": "P1: Add review_mode config table with module-level flags. Part of Step 03. ETA: 4 hours"
+    },
+    {
+      "item": "No SERP data ingestion",
+      "why": "No crawler, no keyword tracking, no rank monitoring",
+      "impact": "HIGH - Foundation missing for anomaly detection and AI-SEO features",
+      "mitigation": "P1: Implement Step 07 (SERP Crawler). Use ScraperAPI or custom Selenium. ETA: 12 hours"
+    }
+  ],
+  "quick_wins": [
+    {
+      "action": "Create change_log, task_logs, audit_issues tables (PostgreSQL schema)",
+      "why": "Foundation for governance before ANY AI automation. Prevents rogue deployments",
+      "eta_hours": 3,
+      "impact": "Enables review mode and audit trail for all future AI features"
+    },
+    {
+      "action": "Add review_mode configuration table with per-module toggles",
+      "why": "Allows safe testing of AI features in review mode before auto mode",
+      "eta_hours": 2,
+      "impact": "Risk mitigation for all 16 AI automation steps"
+    },
+    {
+      "action": "Migrate in-memory storage to PostgreSQL with SQLAlchemy",
+      "why": "Data persistence, ACID guarantees, production readiness",
+      "eta_hours": 16,
+      "impact": "Critical for production deployment and data integrity"
+    },
+    {
+      "action": "Set up Celery with Redis for job scheduling",
+      "why": "Required for SERP scraping, anomaly detection, and all AI automation jobs",
+      "eta_hours": 6,
+      "impact": "Unlocks all scheduled AI features (Steps 7-12)"
+    },
+    {
+      "action": "Deploy Qdrant vector DB in Docker Compose",
+      "why": "Foundation for RAG, embeddings, and AI prompt library (Step 04)",
+      "eta_hours": 4,
+      "impact": "Enables semantic search and context-aware AI responses"
+    },
+    {
+      "action": "Create unified_interactions and review_queue SQL views",
+      "why": "Dashboard needs consolidated data for Review Queue and interaction history",
+      "eta_hours": 4,
+      "impact": "Enables Step 06 (Main Dashboard) with real-time data"
+    },
+    {
+      "action": "Add Prometheus /metrics endpoint with job health",
+      "why": "Monitor AI job success/failure rates and execution times",
+      "eta_hours": 3,
+      "impact": "Visibility into AI automation health before production"
+    },
+    {
+      "action": "Implement basic backup script (pg_dump to S3)",
+      "why": "Data protection before migrating to production database",
+      "eta_hours": 4,
+      "impact": "Disaster recovery capability for PostgreSQL migration"
+    },
+    {
+      "action": "Add structured logging with correlation IDs",
+      "why": "Trace AI job execution across services for debugging",
+      "eta_hours": 3,
+      "impact": "Troubleshooting and audit trail for AI automation"
+    },
+    {
+      "action": "Create AI Suite dashboard landing page with suite navigation",
+      "why": "User-facing entry point for AI, SEO, and Scrape tools (already in nav)",
+      "eta_hours": 4,
+      "impact": "UX foundation for Steps 6-12 feature rollout"
+    }
+  ],
+  "recommendations": {
+    "change_log_location": {
+      "database": "CRM Database (PostgreSQL)",
+      "schema": "public",
+      "table": "change_log",
+      "access": "All AI services write here with status='pending'. CRM API exposes review/approval endpoints"
+    },
+    "review_auto_toggle": {
+      "database": "CRM Database (PostgreSQL)",
+      "schema": "public",
+      "table": "module_config",
+      "fields": "module_name, review_mode (boolean), auto_deploy_enabled (boolean), approval_required_count (int), rollback_enabled (boolean)",
+      "default": "review_mode=true for all modules initially. Graduate to auto per Step 16 criteria"
+    },
+    "implementation_order": [
+      "1. Quick Wins #1-3: Governance tables, review config, PostgreSQL migration (P0)",
+      "2. Quick Win #4: Celery scheduler (P0)",
+      "3. Steps 01-03: Architecture, Data Model, Governance specs (already in progress)",
+      "4. Quick Win #5: Qdrant vector DB (P1)",
+      "5. Step 04-05: RAG wrapper + Prompt library (P1)",
+      "6. Quick Win #6: SQL views for dashboard (P1)",
+      "7. Step 06: Main Dashboard implementation (P1)",
+      "8. Step 07 + Quick Win #7: SERP crawler + monitoring (P1)",
+      "9. Steps 08-12: AI automation modules in review mode (P2)",
+      "10. Steps 13-14: Security + backups (P2)",
+      "11. Step 15: WordPress MU plugin (P2)",
+      "12. Step 16: Gradual auto-mode graduation (P3)"
+    ]
+  },
+  "metadata": {
+    "audit_job_id": "repo_audit_001",
+    "auditor": "Claude AI - Architecture Auditor",
+    "repo_path": "/home/saas/Saas-CRM---Claude",
+    "deployment_model": "Docker Compose (dev) → Kubernetes (prod planned)",
+    "databases": "PostgreSQL 15 (planned), currently in-memory",
+    "schedulers": "None (Celery planned with Redis)",
+    "ai_nodes": "None (LangChain + Qdrant planned)",
+    "integrations": "Twilio (partially), WordPress MU plugin (planned)",
+    "next_steps": "Store this JSON in database as audit_findings table. Begin Quick Wins #1-4 immediately."
+  }
+}

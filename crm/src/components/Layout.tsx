@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showAIMenu, setShowAIMenu] = useState(true);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
@@ -26,7 +27,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { path: '/visual-check', label: 'Visual Check', icon: '🎨' },
   ];
 
+  const aiMenuItems = [
+    { path: '/ai', label: 'AI Dashboard', icon: '🤖' },
+    { path: '/ai/governance', label: 'Governance', icon: '✅' },
+    { path: '/ai/jobs', label: 'AI Jobs', icon: '⚙️' },
+    { path: '/ai/prompts', label: 'Prompts', icon: '📝' },
+    { path: '/ai/context', label: 'Context & RAG', icon: '🔍' },
+  ];
+
   const isActive = (path: string) => location.pathname === path;
+  const isAISection = () => location.pathname.startsWith('/ai');
 
   return (
     <div className="min-h-screen bg-bg-base flex">
@@ -46,7 +56,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-4 overflow-y-auto">
           <ul className="space-y-2">
             {navItems.map((item) => (
               <li key={item.path}>
@@ -63,6 +73,50 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Link>
               </li>
             ))}
+
+            {/* AI Suite Section */}
+            <li className="pt-4">
+              <button
+                onClick={() => setShowAIMenu(!showAIMenu)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  isAISection()
+                    ? 'bg-electric-cyan/10 text-electric-cyan border border-electric-cyan/20'
+                    : 'text-text-secondary hover:bg-white/5 hover:text-text-primary'
+                }`}
+              >
+                <span className="text-xl">🤖</span>
+                <span className="flex-1 text-left font-medium">AI Suite</span>
+                <svg
+                  className={`w-4 h-4 transition-transform ${showAIMenu ? 'rotate-90' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              {/* AI Submenu */}
+              {showAIMenu && (
+                <ul className="mt-2 ml-8 space-y-1">
+                  {aiMenuItems.map((item) => (
+                    <li key={item.path}>
+                      <Link
+                        to={item.path}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                          isActive(item.path)
+                            ? 'bg-electric-cyan/10 text-electric-cyan border border-electric-cyan/20'
+                            : 'text-text-muted hover:bg-white/5 hover:text-text-secondary'
+                        }`}
+                      >
+                        <span className="text-base">{item.icon}</span>
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
           </ul>
         </nav>
 

@@ -25,3 +25,26 @@ httpx==0.26.0
 
 # CORS & Middleware
 python-dotenv==1.0.0
+
+# Vector Database & AI
+qdrant-client==1.7.0
+numpy==1.26.3
+
+# LangChain & LLM Integration
+langchain==0.1.0
+langchain-openai==0.0.2
+openai==1.7.2
+sentence-transformers==2.2.2
+tiktoken==0.5.2
+
+# Validation
+jsonschema==4.20.0
+
+# Database & Migrations
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# Task Queue
+celery==5.3.4
+redis==5.0.1

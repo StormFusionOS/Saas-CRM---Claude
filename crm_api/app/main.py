@@ -20,7 +20,7 @@ Or with uvicorn (when using real FastAPI):
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import auth, leads, webhooks, pricebook, estimates, quotes
+from app.api.routes import auth, leads, webhooks, pricebook, estimates, quotes, proposals
 from app.middleware import RequestIDMiddleware, ErrorHandlerMiddleware
 import structlog
 
@@ -70,6 +70,65 @@ def create_app() -> FastAPI:
 
     # Quotes router - mounted under /sales scope as required
     app.include_router(quotes.router, prefix=f"{settings.API_PREFIX}/sales")
+
+    # Proposals router - also under /sales scope
+    app.include_router(proposals.router, prefix=f"{settings.API_PREFIX}/sales")
+
+    # Scheduling router - customer self-scheduling (public endpoints)
+    from app.api.routes import scheduling
+    app.include_router(scheduling.router, prefix=settings.API_PREFIX)
+
+    # Forms router - SmartForm Builder (mixed public/staff endpoints)
+    from app.api.routes import forms
+    app.include_router(forms.router, prefix=settings.API_PREFIX)
+
+    # Follow-Up Automation router - automated follow-up sequences (staff endpoints)
+    from app.api.routes import followup
+    app.include_router(followup.router, prefix=settings.API_PREFIX)
+
+    # Packages & Bundles router - service packages (mixed staff/public endpoints)
+    from app.api.routes import packages
+    app.include_router(packages.router, prefix=settings.API_PREFIX)
+
+    # Calendar Connections router - calendar integration (staff endpoints)
+    from app.api.routes import calendar
+    app.include_router(calendar.router, prefix=settings.API_PREFIX)
+
+    # SMS / Text Hub router - SMS messaging (staff endpoints)
+    from app.api.routes import sms
+    app.include_router(sms.router, prefix=settings.API_PREFIX)
+
+    # Reports & Dashboards router - analytics and reporting (staff endpoints)
+    from app.api.routes import reports
+    app.include_router(reports.router, prefix=settings.API_PREFIX)
+
+    # Payments & Deposits router - payment processing (staff endpoints)
+    from app.api.routes import payments
+    app.include_router(payments.router, prefix=settings.API_PREFIX)
+
+    # Formula Engine router - formula testing and validation (staff endpoints)
+    from app.api.routes import formulas
+    app.include_router(formulas.router, prefix=settings.API_PREFIX)
+
+    # Consent & Compliance router - GDPR, consent tracking (staff endpoints)
+    from app.api.routes import consent
+    app.include_router(consent.router, prefix=settings.API_PREFIX)
+
+    # Governance router - AI governance (change_log, task_logs, audit_issues) (staff endpoints)
+    from app.api.routes import governance
+    app.include_router(governance.router, prefix=settings.API_PREFIX)
+
+    # RAG router - Retrieval Augmented Generation (context retrieval, embeddings, AI chain) (staff endpoints)
+    from app.api.routes import rag
+    app.include_router(rag.router, prefix=settings.API_PREFIX)
+
+    # Prompts router - Prompt library with versioning, validation, and self-healing (staff endpoints)
+    from app.api.routes import prompts
+    app.include_router(prompts.router, prefix=settings.API_PREFIX)
+
+    # AI Jobs router - Manual trigger endpoints for AI automation jobs (staff endpoints)
+    from app.api.routes import ai_jobs
+    app.include_router(ai_jobs.router, prefix=settings.API_PREFIX)
 
     app.include_router(webhooks.router)  # No prefix for webhooks
 

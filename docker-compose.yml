@@ -77,6 +77,27 @@ services:
       - app-network
 
   # ----------------------------------------------------------------------------
+  # Qdrant (Vector Database for RAG & Embeddings)
+  # ----------------------------------------------------------------------------
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "${QDRANT_PORT:-6333}:6333"  # HTTP API
+      - "${QDRANT_GRPC_PORT:-6334}:6334"  # gRPC API
+    volumes:
+      - qdrant-data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # ----------------------------------------------------------------------------
   # Optional: Nginx Reverse Proxy
   # ----------------------------------------------------------------------------
   # Uncomment to run Nginx in Docker
@@ -156,6 +177,51 @@ services:
       - app-network
     restart: unless-stopped
 
+  # ----------------------------------------------------------------------------
+  # Celery Worker (AI Automation Tasks)
+  # ----------------------------------------------------------------------------
+  celery-worker:
+    build:
+      context: ./crm_api
+      dockerfile: Dockerfile
+    container_name: celery-worker
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=2 --queues=default,ai,governance,scraper,serp
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=postgresql://crm_user:crm_password@crm-db:5432/crm
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      crm-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # ----------------------------------------------------------------------------
+  # Celery Beat (Task Scheduler)
+  # ----------------------------------------------------------------------------
+  celery-beat:
+    build:
+      context: ./crm_api
+      dockerfile: Dockerfile
+    container_name: celery-beat
+    command: celery -A app.celery_app beat --loglevel=info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=postgresql://crm_user:crm_password@crm-db:5432/crm
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
 # ==============================================================================
 # Networks
 # ==============================================================================
@@ -172,4 +238,6 @@ volumes:
   ops-db-data:
     driver: local
   redis-data:
+    driver: local
+  qdrant-data:
     driver: local

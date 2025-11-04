@@ -10,10 +10,11 @@ import React from 'react';
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'glass' | 'neon';
   padding?: 'sm' | 'md' | 'lg';
+  animate?: 'none' | 'fade-in' | 'slide-in-up' | 'scale-in';
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ variant = 'default', padding = 'md', className = '', children, ...props }, ref) => {
+  ({ variant = 'default', padding = 'md', animate = 'none', className = '', children, ...props }, ref) => {
     const baseClasses = 'rounded-lg transition-all duration-base';
 
     const variantClasses = {
@@ -28,10 +29,18 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       lg: 'p-8',
     };
 
+    const animationClasses = {
+      none: '',
+      'fade-in': 'animate-fade-in',
+      'slide-in-up': 'animate-slide-in-up',
+      'scale-in': 'animate-scale-in',
+    };
+
     const combinedClasses = [
       baseClasses,
       variantClasses[variant],
       paddingClasses[padding],
+      animationClasses[animate],
       className,
     ].filter(Boolean).join(' ');
 

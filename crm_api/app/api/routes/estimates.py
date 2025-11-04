@@ -22,6 +22,7 @@ from app.models import (
     get_next_job_id,
 )
 from app.api.routes.pricebook import _pricebook_items
+from app.services.formula_engine import FormulaEngine
 
 router = APIRouter(tags=["estimates"])
 
@@ -44,7 +45,7 @@ class AcceptEstimateRequest(BaseModel):
 
 def evaluate_formula(formula: str, inputs: Dict[str, Any], base_price: float) -> float:
     """
-    Safely evaluate a pricing formula.
+    Safely evaluate a pricing formula using the FormulaEngine.
 
     Args:
         formula: Formula string (e.g., "base_price * sq_ft + (stories - 1) * 50")
@@ -54,23 +55,12 @@ def evaluate_formula(formula: str, inputs: Dict[str, Any], base_price: float) ->
     Returns:
         Calculated price
     """
-    # Create safe namespace with only allowed functions
-    safe_namespace = {
-        'base_price': base_price,
-        'min': min,
-        'max': max,
-        'abs': abs,
-        'round': round,
-    }
+    result = FormulaEngine.evaluate(formula, inputs, base_price)
 
-    # Add input variables
-    safe_namespace.update(inputs)
+    if not result.success:
+        raise ValueError(result.error)
 
-    try:
-        result = eval(formula, {"__builtins__": {}}, safe_namespace)
-        return float(result)
-    except Exception as e:
-        raise ValueError(f"Error evaluating formula '{formula}': {str(e)}")
+    return result.result
 
 
 @router.post("/estimates/quote", response_model=dict)

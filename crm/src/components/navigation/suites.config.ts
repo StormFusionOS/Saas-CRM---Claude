@@ -49,11 +49,39 @@ export const SUITES: Suite[] = [
         description: 'AI suite overview',
       },
       {
+        id: 'ai-governance',
+        label: 'Governance',
+        route: '/ai/governance',
+        icon: 'shield',
+        description: 'Review and approve AI-generated changes',
+        badgeKey: 'reviewQueue',
+      },
+      {
+        id: 'ai-jobs',
+        label: 'AI Jobs',
+        route: '/ai/jobs',
+        icon: 'bolt',
+        description: 'Manage AI automation jobs',
+      },
+      {
+        id: 'ai-prompts',
+        label: 'Prompts',
+        route: '/ai/prompts',
+        icon: 'message',
+        description: 'Prompt library and templates',
+      },
+      {
+        id: 'ai-context',
+        label: 'Context & RAG',
+        route: '/ai/context',
+        icon: 'search',
+        description: 'Vector search and context retrieval',
+      },
+      {
         id: 'prompt-runner',
         label: 'Prompt Runner',
         route: '/ai/prompt-runner',
         icon: 'bolt',
-        badgeKey: 'reviewQueue',
       },
       {
         id: 'snippet-optimizer',
@@ -272,6 +300,13 @@ export const SUITES: Suite[] = [
         description: 'Manage service offerings and pricing',
       },
       {
+        id: 'formulas',
+        label: 'Formula Testing Lab',
+        route: '/sales/formulas',
+        icon: 'calculator',
+        description: 'Test and validate pricing formulas',
+      },
+      {
         id: 'quotes',
         label: 'Quotes & Invoices',
         route: '/quotes',
@@ -336,6 +371,13 @@ export const SUITES: Suite[] = [
         route: '/admin/audit',
         icon: 'history',
         description: 'System activity audit trail',
+      },
+      {
+        id: 'compliance',
+        label: 'GDPR Compliance',
+        route: '/admin/compliance',
+        icon: 'shield',
+        description: 'Data subject requests and compliance',
       },
       {
         id: 'integrations',
