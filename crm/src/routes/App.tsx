@@ -8,6 +8,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from '../lib/auth-context';
 import { PWAProvider } from '../components/pwa/PWAProvider';
+import { Toaster } from '../components/ui/shadcn/toaster';
 import Shell from '../components/layout/Shell';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
@@ -98,6 +99,7 @@ function App() {
             <Route path="/nav-demo" element={<NavDemoPage />} />
             <Route path="/" element={<Navigate to="/sales/dashboard" replace />} />
           </Routes>
+          <Toaster />
         </PWAProvider>
       </AuthProvider>
     </div>

@@ -31,6 +31,15 @@ import {
 } from '@/components/data-table/columns';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/shadcn/dialog';
+import { ContactForm, ContactFormValues } from '@/components/forms/ContactForm';
+import { useToast } from '@/components/ui/shadcn/use-toast';
 import { leadsAPI } from '@/lib/api';
 
 interface Contact {
@@ -61,6 +70,9 @@ const ContactsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedRows, setSelectedRows] = useState<Contact[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const { toast } = useToast();
 
   // Server-side pagination state from URL params
   const pageIndex = Number(searchParams.get('page') || '0');
@@ -102,6 +114,91 @@ const ContactsPage: React.FC = () => {
     }
   };
 
+  const handleCreateContact = async (values: ContactFormValues) => {
+    try {
+      // In a real implementation, call the API to create the contact
+      console.log('Creating contact:', values);
+
+      toast({
+        title: 'Contact created',
+        description: `${values.first_name} ${values.last_name} has been added successfully.`,
+      });
+
+      setIsFormOpen(false);
+      await loadContacts();
+    } catch (err: any) {
+      console.error('Error creating contact:', err);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to create contact. Please try again.',
+      });
+      throw err;
+    }
+  };
+
+  const handleEditContact = async (values: ContactFormValues) => {
+    if (!editingContact) return;
+
+    try {
+      // In a real implementation, call the API to update the contact
+      console.log('Updating contact:', editingContact.id, values);
+
+      toast({
+        title: 'Contact updated',
+        description: `${values.first_name} ${values.last_name} has been updated successfully.`,
+      });
+
+      setIsFormOpen(false);
+      setEditingContact(null);
+      await loadContacts();
+    } catch (err: any) {
+      console.error('Error updating contact:', err);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to update contact. Please try again.',
+      });
+      throw err;
+    }
+  };
+
+  const handleDeleteContact = async (contact: Contact) => {
+    try {
+      // In a real implementation, call the API to delete the contact
+      console.log('Deleting contact:', contact.id);
+
+      toast({
+        title: 'Contact deleted',
+        description: `${contact.first_name} ${contact.last_name} has been deleted.`,
+      });
+
+      await loadContacts();
+    } catch (err: any) {
+      console.error('Error deleting contact:', err);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete contact. Please try again.',
+      });
+    }
+  };
+
+  const openCreateForm = () => {
+    setEditingContact(null);
+    setIsFormOpen(true);
+  };
+
+  const openEditForm = (contact: Contact) => {
+    setEditingContact(contact);
+    setIsFormOpen(true);
+  };
+
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingContact(null);
+  };
+
   // Define row actions
   const rowActions: RowAction<Contact>[] = [
     {
@@ -115,10 +212,7 @@ const ContactsPage: React.FC = () => {
     {
       label: 'Edit Contact',
       icon: Edit,
-      onClick: (contact) => {
-        console.log('Edit contact:', contact);
-        // Open edit modal or navigate to edit page
-      },
+      onClick: openEditForm,
     },
     {
       label: 'Send Email',
@@ -144,8 +238,7 @@ const ContactsPage: React.FC = () => {
       icon: Trash2,
       onClick: (contact) => {
         if (confirm(`Delete ${contact.first_name} ${contact.last_name}?`)) {
-          console.log('Delete contact:', contact);
-          // Implement delete logic
+          handleDeleteContact(contact);
         }
       },
       variant: 'destructive',
@@ -342,7 +435,7 @@ const ContactsPage: React.FC = () => {
             <Button
               variant="primary"
               size="md"
-              onClick={() => console.log('Create new contact')}
+              onClick={openCreateForm}
             >
               New Contact
             </Button>
@@ -395,6 +488,29 @@ const ContactsPage: React.FC = () => {
           />
         </Card>
       </div>
+
+      {/* Contact Form Dialog */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingContact ? 'Edit Contact' : 'Create New Contact'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingContact
+                ? 'Update the contact information below.'
+                : 'Fill in the details to add a new contact to your CRM.'}
+            </DialogDescription>
+          </DialogHeader>
+          <ContactForm
+            defaultValues={editingContact || undefined}
+            onSubmit={editingContact ? handleEditContact : handleCreateContact}
+            onCancel={closeForm}
+            submitLabel={editingContact ? 'Update Contact' : 'Create Contact'}
+            isEdit={!!editingContact}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
