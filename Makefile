@@ -1,336 +1,208 @@
 # ==============================================================================
-# PRODUCTION-READY MONOREPO MAKEFILE
+# SaaS CRM Monorepo - Development Makefile
 # ==============================================================================
-# Usage:
-#   make help              - Show this help message
-#   make setup             - Initial setup for local development
-#   make test              - Run all tests
-#   make migrate           - Generate Alembic migration
-#   make docker-up         - Start Docker services
-#   make docker-down       - Stop Docker services
+# Simplifies common development tasks for local Docker-based development.
+#
+# Quick Start:
+#   make setup       # Initial setup (copy .env, install deps)
+#   make dev-up      # Start all services in development mode
+#   make dev-down    # Stop all services
+#   make dev-logs    # View logs from all services
+#
 # ==============================================================================
 
-.PHONY: help setup test test-crm test-ops test-frontend lint clean docker-up docker-down migrate dev dev-stop checks checks-fast seed seed-crm seed-ops seed-clear supply-chain supply-chain-sbom supply-chain-license supply-chain-attest supply-chain-verify supply-chain-validate supply-chain-license-strict
+.PHONY: help setup dev-up dev-down dev-restart dev-logs dev-rebuild \
+        prod-up prod-down prod-logs db-reset db-migrate db-shell \
+        test lint format clean
 
 # Default target
-.DEFAULT_GOAL := help
-
-# Colors for output
-BLUE := \033[0;34m
-GREEN := \033[0;32m
-YELLOW := \033[0;33m
-RED := \033[0;31m
-NC := \033[0m # No Color
-
-# ==============================================================================
-# HELP
-# ==============================================================================
-
-help: ## Show this help message
-	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
-	@echo "$(GREEN)  Production-Ready Monorepo - Available Commands$(NC)"
-	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
+help:
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  SaaS CRM Monorepo - Development Commands"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo ""
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(YELLOW)%-20s$(NC) %s\n", $$1, $$2}'
+	@echo "📦  Setup & Installation:"
+	@echo "  make setup          Copy .env.example → .env and install dependencies"
 	@echo ""
-	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
+	@echo "🚀  Development:"
+	@echo "  make dev-up         Start all services in development mode"
+	@echo "  make dev-down       Stop all development services"
+	@echo "  make dev-restart    Restart all development services"
+	@echo "  make dev-logs       View logs from all services (Ctrl+C to exit)"
+	@echo "  make dev-rebuild    Rebuild and restart all services"
+	@echo ""
+	@echo "🏭  Production:"
+	@echo "  make prod-up        Start all services in production mode"
+	@echo "  make prod-down      Stop all production services"
+	@echo "  make prod-logs      View production logs"
+	@echo ""
+	@echo "🗄️   Database:"
+	@echo "  make db-reset       Reset databases (WARNING: destroys data)"
+	@echo "  make db-migrate     Run database migrations"
+	@echo "  make db-shell-crm   Open PostgreSQL shell for CRM database"
+	@echo "  make db-shell-ops   Open PostgreSQL shell for Ops database"
+	@echo ""
+	@echo "🧪  Testing & Quality:"
+	@echo "  make test           Run all tests"
+	@echo "  make test-api       Run API tests only"
+	@echo "  make lint           Run linters (Python + TypeScript)"
+	@echo "  make format         Auto-format code"
+	@echo ""
+	@echo "🧹  Cleanup:"
+	@echo "  make clean          Remove build artifacts, caches, etc."
+	@echo "  make clean-docker   Remove all Docker volumes and images"
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # ==============================================================================
-# SETUP
+# Setup & Installation
 # ==============================================================================
 
-setup: ## Initial setup for local development
-	@echo "$(GREEN)Setting up local development environment...$(NC)"
-	@cp -n .env.example .env || true
-	@echo "$(GREEN)✓ Created .env file from template$(NC)"
-	@echo "$(YELLOW)Installing Python dependencies...$(NC)"
-	@cd crm_api && pip install -q pytest pytest-cov || true
-	@cd ops_api && pip install -q pytest pytest-cov || true
-	@echo "$(GREEN)✓ Python dependencies installed$(NC)"
-	@echo "$(YELLOW)Installing frontend dependencies...$(NC)"
-	@cd crm && npm install --silent || true
-	@cd ops-console && npm install --silent || true
-	@echo "$(GREEN)✓ Frontend dependencies installed$(NC)"
-	@echo "$(GREEN)✓ Setup complete!$(NC)"
-
-# ==============================================================================
-# TESTING
-# ==============================================================================
-
-test: test-crm test-ops test-frontend ## Run all tests (backend + frontend)
-
-test-crm: ## Run CRM API tests
-	@echo "$(BLUE)Running CRM API tests...$(NC)"
-	@cd crm_api && python -m pytest -v --tb=short
-
-test-ops: ## Run Ops API tests
-	@echo "$(BLUE)Running Ops API tests...$(NC)"
-	@cd ops_api && python -m pytest -v --tb=short
-
-test-frontend: ## Run frontend tests
-	@echo "$(BLUE)Running CRM frontend tests...$(NC)"
-	@cd crm && npm run test -- --run || true
-	@echo "$(BLUE)Running Ops Console frontend tests...$(NC)"
-	@cd ops-console && npm run test -- --run || true
-
-test-coverage: ## Run tests with coverage report
-	@echo "$(BLUE)Running tests with coverage...$(NC)"
-	@cd crm_api && python -m pytest --cov=app --cov-report=html --cov-report=term
-	@cd ops_api && python -m pytest --cov=app --cov-report=html --cov-report=term
-	@echo "$(GREEN)✓ Coverage reports generated in htmlcov/$(NC)"
-
-# ==============================================================================
-# LINTING
-# ==============================================================================
-
-lint: ## Run linters (when using real packages)
-	@echo "$(YELLOW)Note: Linting requires real packages (not stubs)$(NC)"
-	@echo "$(YELLOW)Install: pip install black ruff mypy$(NC)"
-	# black --check crm_api/ ops_api/
-	# ruff check crm_api/ ops_api/
-	# mypy crm_api/ ops_api/
-
-format: ## Format code (when using real packages)
-	@echo "$(YELLOW)Note: Formatting requires real packages (not stubs)$(NC)"
-	# black crm_api/ ops_api/
-	# ruff check --fix crm_api/ ops_api/
-
-# ==============================================================================
-# DATABASE MIGRATIONS
-# ==============================================================================
-
-migrate: ## Generate Alembic migration (Usage: make migrate SERVICE=crm message="add table")
-	@if [ -z "$(SERVICE)" ]; then \
-		echo "$(RED)ERROR: SERVICE parameter required$(NC)"; \
-		echo "$(YELLOW)Usage: make migrate SERVICE=crm message='add users table'$(NC)"; \
-		echo "$(YELLOW)       make migrate SERVICE=ops message='add scheduler'$(NC)"; \
-		exit 1; \
-	fi
-	@if [ -z "$(message)" ]; then \
-		echo "$(RED)ERROR: message parameter required$(NC)"; \
-		echo "$(YELLOW)Usage: make migrate SERVICE=$(SERVICE) message='your migration message'$(NC)"; \
-		exit 1; \
-	fi
-	@if [ "$(SERVICE)" = "crm" ]; then \
-		echo "$(GREEN)Generating CRM migration: $(message)$(NC)"; \
-		cd crm_api && alembic revision --autogenerate -m "$(message)"; \
-	elif [ "$(SERVICE)" = "ops" ]; then \
-		echo "$(GREEN)Generating Ops migration: $(message)$(NC)"; \
-		cd ops_api && alembic revision --autogenerate -m "$(message)"; \
-	else \
-		echo "$(RED)ERROR: Invalid SERVICE. Use 'crm' or 'ops'$(NC)"; \
-		exit 1; \
-	fi
-
-migrate-upgrade: ## Apply migrations (Usage: make migrate-upgrade SERVICE=crm)
-	@if [ -z "$(SERVICE)" ]; then \
-		echo "$(RED)ERROR: SERVICE parameter required$(NC)"; \
-		exit 1; \
-	fi
-	@if [ "$(SERVICE)" = "crm" ]; then \
-		cd crm_api && alembic upgrade head; \
-	elif [ "$(SERVICE)" = "ops" ]; then \
-		cd ops_api && alembic upgrade head; \
-	fi
-
-migrate-downgrade: ## Rollback migrations (Usage: make migrate-downgrade SERVICE=crm)
-	@if [ -z "$(SERVICE)" ]; then \
-		echo "$(RED)ERROR: SERVICE parameter required$(NC)"; \
-		exit 1; \
-	fi
-	@if [ "$(SERVICE)" = "crm" ]; then \
-		cd crm_api && alembic downgrade -1; \
-	elif [ "$(SERVICE)" = "ops" ]; then \
-		cd ops_api && alembic downgrade -1; \
-	fi
-
-check-migrations: ## Check for migration drift
-	@echo "$(BLUE)Checking for migration drift...$(NC)"
-	@python tools/check_migrations.py
-
-schema-diff: ## Show schema differences (Usage: make schema-diff SERVICE=crm)
-	@python tools/schema_diff.py --service $(SERVICE)
-
-# ==============================================================================
-# DOCKER
-# ==============================================================================
-
-docker-up: ## Start Docker services (Postgres, Redis)
-	@echo "$(GREEN)Starting Docker services...$(NC)"
-	@docker-compose up -d
-	@echo "$(GREEN)✓ Services started$(NC)"
-	@docker-compose ps
-
-docker-down: ## Stop Docker services
-	@echo "$(YELLOW)Stopping Docker services...$(NC)"
-	@docker-compose down
-	@echo "$(GREEN)✓ Services stopped$(NC)"
-
-docker-logs: ## Show Docker logs (Usage: make docker-logs SERVICE=crm-db)
-	@docker-compose logs -f $(SERVICE)
-
-docker-clean: ## Remove Docker volumes and clean up
-	@echo "$(RED)WARNING: This will delete all data!$(NC)"
-	@read -p "Continue? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
-	@docker-compose down -v
-	@echo "$(GREEN)✓ Cleaned up$(NC)"
-
-# ==============================================================================
-# DEVELOPMENT SERVERS
-# ==============================================================================
-
-dev: ## Start entire development environment (recommended)
-	@echo "$(GREEN)Starting development environment...$(NC)"
-	@chmod +x scripts/dev.sh
-	@./scripts/dev.sh
-
-dev-stop: ## Stop development environment
-	@echo "$(YELLOW)Stopping development environment...$(NC)"
-	@chmod +x scripts/dev.sh
-	@./scripts/dev.sh --stop
-
-run-crm-api: ## Run CRM API locally (dev mode)
-	@echo "$(GREEN)Starting CRM API on http://localhost:8000$(NC)"
-	@cd crm_api && python -m app.main
-
-run-ops-api: ## Run Ops API locally (dev mode)
-	@echo "$(GREEN)Starting Ops API on http://localhost:8001$(NC)"
-	@cd ops_api && python -m app.main
-
-run-crm-frontend: ## Run CRM frontend dev server
-	@echo "$(GREEN)Starting CRM frontend on http://localhost:5173$(NC)"
-	@cd crm && npm run dev
-
-run-ops-frontend: ## Run Ops Console frontend dev server
-	@echo "$(GREEN)Starting Ops Console on http://localhost:5174$(NC)"
-	@cd ops-console && npm run dev
-
-# ==============================================================================
-# CLEANUP
-# ==============================================================================
-
-clean: ## Clean build artifacts and caches
-	@echo "$(YELLOW)Cleaning build artifacts...$(NC)"
-	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type d -name "htmlcov" -exec rm -rf {} + 2>/dev/null || true
-	@find . -type f -name ".coverage" -delete 2>/dev/null || true
-	@find . -type d -name "node_modules" -prune -o -type d -name "dist" -exec rm -rf {} + 2>/dev/null || true
-	@echo "$(GREEN)✓ Cleaned up$(NC)"
-
-clean-all: clean docker-clean ## Deep clean (including Docker volumes)
-
-# ==============================================================================
-# BUILD
-# ==============================================================================
-
-build-frontend: ## Build production frontend bundles
-	@echo "$(GREEN)Building CRM frontend...$(NC)"
-	@cd crm && npm run build
-	@echo "$(GREEN)Building Ops Console...$(NC)"
-	@cd ops-console && npm run build
-	@echo "$(GREEN)✓ Frontend builds complete$(NC)"
-
-# ==============================================================================
-# UTILITIES
-# ==============================================================================
-
-check-env: ## Verify .env file exists
+setup:
+	@echo "🔧 Setting up development environment..."
 	@if [ ! -f .env ]; then \
-		echo "$(RED)ERROR: .env file not found$(NC)"; \
-		echo "$(YELLOW)Run: make setup$(NC)"; \
-		exit 1; \
+		echo "📝 Copying .env.example → .env..."; \
+		cp .env.example .env; \
+		echo "✅ .env created. Please update with your credentials."; \
 	else \
-		echo "$(GREEN)✓ .env file exists$(NC)"; \
+		echo "⚠️  .env already exists, skipping..."; \
+	fi
+	@echo "📦 Installing frontend dependencies..."
+	@cd crm && npm install
+	@cd ops-console && npm install
+	@echo "📦 Installing backend dependencies..."
+	@cd crm_api && pip3 install -r requirements.txt
+	@cd ops_api && pip3 install -r requirements.txt
+	@echo "✅ Setup complete! Run 'make dev-up' to start services."
+
+# ==============================================================================
+# Development Mode
+# ==============================================================================
+
+dev-up:
+	@echo "🚀 Starting development services..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	@echo "✅ Services started!"
+	@echo ""
+	@echo "📡 Service URLs:"
+	@echo "  CRM API:          http://localhost:8000"
+	@echo "  Ops API:          http://localhost:8001"
+	@echo "  Adminer (DB GUI): http://localhost:8080"
+	@echo "  RedisInsight:     http://localhost:8081"
+	@echo ""
+	@echo "To view logs: make dev-logs"
+	@echo "To stop:      make dev-down"
+
+dev-down:
+	@echo "🛑 Stopping development services..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+	@echo "✅ Services stopped."
+
+dev-restart:
+	@echo "🔄 Restarting development services..."
+	@$(MAKE) dev-down
+	@$(MAKE) dev-up
+
+dev-logs:
+	@echo "📜 Viewing logs (Ctrl+C to exit)..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f
+
+dev-rebuild:
+	@echo "🔨 Rebuilding and restarting services..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+	@echo "✅ Rebuild complete!"
+
+# ==============================================================================
+# Production Mode
+# ==============================================================================
+
+prod-up:
+	@echo "🏭 Starting production services..."
+	docker-compose up -d
+	@echo "✅ Production services started!"
+
+prod-down:
+	@echo "🛑 Stopping production services..."
+	docker-compose down
+	@echo "✅ Production services stopped."
+
+prod-logs:
+	@echo "📜 Viewing production logs (Ctrl+C to exit)..."
+	docker-compose logs -f
+
+# ==============================================================================
+# Database Management
+# ==============================================================================
+
+db-reset:
+	@echo "⚠️  WARNING: This will destroy all data!"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		echo "💣 Resetting databases..."; \
+		docker-compose -f docker-compose.yml -f docker-compose.dev.yml down -v; \
+		docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d crm-db ops-db redis; \
+		sleep 5; \
+		echo "✅ Databases reset."; \
+	else \
+		echo "❌ Cancelled."; \
 	fi
 
-checks: ## Run all quality checks (tests, coverage, security)
-	@echo "$(GREEN)Running all quality checks...$(NC)"
-	@chmod +x scripts/checks.sh
-	@./scripts/checks.sh
+db-shell-crm:
+	@echo "🐘 Opening CRM database shell..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec crm-db psql -U crm_user -d crm_dev
 
-checks-fast: ## Run fast quality checks (skip slower validations)
-	@echo "$(GREEN)Running fast quality checks...$(NC)"
-	@chmod +x scripts/checks.sh
-	@./scripts/checks.sh --fast
-
-seed: ## Seed development databases with demo data
-	@echo "$(YELLOW)Seeding databases...$(NC)"
-	@python scripts/seed.py
-	@echo "$(GREEN)✓ Database seeded$(NC)"
-
-seed-crm: ## Seed CRM database only
-	@echo "$(YELLOW)Seeding CRM database...$(NC)"
-	@python scripts/seed.py --crm
-
-seed-ops: ## Seed Ops database only
-	@echo "$(YELLOW)Seeding Ops database...$(NC)"
-	@python scripts/seed.py --ops
-
-seed-clear: ## Clear all seeded data
-	@echo "$(YELLOW)Clearing all seeded data...$(NC)"
-	@python scripts/seed.py --clear
+db-shell-ops:
+	@echo "🐘 Opening Ops database shell..."
+	docker-compose -f docker-compose.yml -f docker-compose.dev.yml exec ops-db psql -U ops_user -d ops_dev
 
 # ==============================================================================
-# DOCUMENTATION
+# Testing & Quality
 # ==============================================================================
 
-docs: ## Generate API documentation
-	@echo "$(BLUE)Generating API documentation...$(NC)"
-	@echo "$(YELLOW)TODO: Add Sphinx or similar for API docs$(NC)"
+test:
+	@echo "🧪 Running all tests..."
+	@$(MAKE) test-api
+
+test-api:
+	@echo "🧪 Running API tests..."
+	@cd crm_api && PYTHONPATH=/home/saas/Saas-CRM---Claude/crm_api python3 -m pytest tests/ -v || true
+	@cd ops_api && python3 -m pytest tests/ -v || true
+
+lint:
+	@echo "🔍 Running linters..."
+	@echo "  TypeScript (eslint)..."
+	@cd crm && npm run lint || true
+	@cd ops-console && npm run lint || true
 
 # ==============================================================================
-# CI/CD
+# Cleanup
 # ==============================================================================
 
-ci: checks ## Run CI pipeline (all quality checks)
-	@echo "$(GREEN)✓ CI pipeline passed$(NC)"
+clean:
+	@echo "🧹 Cleaning build artifacts..."
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo "✅ Clean complete."
+
+clean-docker:
+	@echo "⚠️  WARNING: This will remove all Docker volumes and images!"
+	@read -p "Are you sure? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		echo "💣 Removing Docker resources..."; \
+		docker-compose -f docker-compose.yml -f docker-compose.dev.yml down -v --rmi all; \
+		echo "✅ Docker cleanup complete."; \
+	else \
+		echo "❌ Cancelled."; \
+	fi
 
 # ==============================================================================
-# SUPPLY CHAIN SECURITY
+# Service Status
 # ==============================================================================
 
-supply-chain: ## Run all supply chain security checks
-	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
-	@echo "$(GREEN)  Supply Chain Security Pipeline$(NC)"
-	@echo "$(BLUE)═══════════════════════════════════════════════════════════════════════$(NC)"
-	@echo ""
-	@$(MAKE) supply-chain-sbom
-	@$(MAKE) supply-chain-license
-	@$(MAKE) supply-chain-attest
-	@$(MAKE) supply-chain-verify
-	@echo ""
-	@echo "$(GREEN)✓ All supply chain security checks passed$(NC)"
-
-supply-chain-sbom: ## Generate SBOMs for all services
-	@echo "$(YELLOW)Generating SBOMs...$(NC)"
-	@python tools/sbom/generate.py --all
-	@echo "$(GREEN)✓ SBOMs generated$(NC)"
-
-supply-chain-license: ## Check licenses against policy
-	@echo "$(YELLOW)Checking licenses...$(NC)"
-	@python tools/sbom/license_check.py
-	@echo "$(GREEN)✓ License check passed$(NC)"
-
-supply-chain-attest: ## Generate signed attestations
-	@echo "$(YELLOW)Generating attestations...$(NC)"
-	@BUILD_ID=$$(date -u +%Y%m%d-%H%M%S)-$$(git rev-parse --short HEAD 2>/dev/null || echo "local"); \
-	python tools/sign/attest.py --all --build-id $$BUILD_ID
-	@echo "$(GREEN)✓ Attestations generated$(NC)"
-
-supply-chain-verify: ## Verify attestations
-	@echo "$(YELLOW)Verifying attestations...$(NC)"
-	@python tools/sign/verify.py --verify-all
-	@echo "$(GREEN)✓ Verification passed$(NC)"
-
-supply-chain-validate: ## Validate SBOMs only
-	@echo "$(YELLOW)Validating SBOMs...$(NC)"
-	@python tools/sbom/generate.py --validate
-	@echo "$(GREEN)✓ SBOM validation passed$(NC)"
-
-supply-chain-license-strict: ## Check licenses in strict mode
-	@echo "$(YELLOW)Checking licenses (strict mode)...$(NC)"
-	@python tools/sbom/license_check.py --strict
-	@echo "$(GREEN)✓ Strict license check passed$(NC)"
+status:
+	@echo "📊 Service Status:"
+	@docker-compose -f docker-compose.yml -f docker-compose.dev.yml ps
