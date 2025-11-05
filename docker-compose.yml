@@ -128,8 +128,13 @@ services:
     environment:
       - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-prod}
       - ACCESS_TOKEN_EXPIRE_SECONDS=${ACCESS_TOKEN_EXPIRE_SECONDS:-3600}
-      - CRM_CORS_ORIGINS=${CRM_CORS_ORIGINS:-http://localhost:5173,http://192.168.0.220:5173,http://localhost:80}
+      - CRM_CORS_ORIGINS=${CRM_CORS_ORIGINS:-http://localhost:5173,http://192.168.0.220:5173,http://192.168.0.220:5175,http://localhost:80}
       - DEBUG=${DEBUG:-false}
+      - CRM_DB_HOST=crm-db
+      - CRM_DB_PORT=5432
+      - CRM_DB_NAME=crm_production
+      - CRM_DB_USER=crm_prod_user
+      - CRM_DB_PASSWORD=GwnC3wizJMdFgkatnLj3
     ports:
       - "8000:8000"
     depends_on:

@@ -38,6 +38,15 @@ import AIGovernancePage from '../pages/AIGovernancePage';
 import AIJobsPage from '../pages/AIJobsPage';
 import AIContextPage from '../pages/AIContextPage';
 import PromptRunnerPage from '../pages/PromptRunnerPage';
+// Scrape Suite Pages
+import ScrapeDashboard from '../pages/scrape-suite/DashboardPage';
+import ScrapeKeywordsPage from '../pages/scrape-suite/KeywordsPage';
+import ScrapeCompetitorsPage from '../pages/scrape-suite/CompetitorsPage';
+import ScrapeSERPExplorerPage from '../pages/scrape-suite/SERPExplorerPage';
+import ScrapeRunsLogsPage from '../pages/scrape-suite/RunsLogsPage';
+import ScrapeBacklinksCitationsPage from '../pages/scrape-suite/BacklinksCitationsPage';
+import ScrapeAuditsPage from '../pages/scrape-suite/AuditsPage';
+import ScrapeSettingsPage from '../pages/scrape-suite/SettingsPage';
 
 function App() {
   return (
@@ -55,7 +64,15 @@ function App() {
             <Route path="/ai/prompt-runner" element={<Shell><PromptRunnerPage /></Shell>} />
             <Route path="/ai/context" element={<Shell><AIContextPage /></Shell>} />
             <Route path="/seo/dashboard" element={<Shell><SEODashboardPage /></Shell>} />
-            <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboardPage /></Shell>} />
+            <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboard /></Shell>} />
+            <Route path="/scrape" element={<Shell><ScrapeDashboard /></Shell>} />
+            <Route path="/scrape/keywords" element={<Shell><ScrapeKeywordsPage /></Shell>} />
+            <Route path="/scrape/competitors" element={<Shell><ScrapeCompetitorsPage /></Shell>} />
+            <Route path="/scrape/serp-explorer" element={<Shell><ScrapeSERPExplorerPage /></Shell>} />
+            <Route path="/scrape/runs-logs" element={<Shell><ScrapeRunsLogsPage /></Shell>} />
+            <Route path="/scrape/backlinks" element={<Shell><ScrapeBacklinksCitationsPage /></Shell>} />
+            <Route path="/scrape/audits" element={<Shell><ScrapeAuditsPage /></Shell>} />
+            <Route path="/scrape/settings" element={<Shell><ScrapeSettingsPage /></Shell>} />
             <Route path="/sales/dashboard" element={<Shell><SalesDashboardPage /></Shell>} />
             <Route path="/sales/services" element={<Shell><ServiceCatalogPage /></Shell>} />
             <Route path="/sales/formulas" element={<Shell><FormulaTestingPage /></Shell>} />

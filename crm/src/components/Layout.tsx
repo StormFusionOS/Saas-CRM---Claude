@@ -43,14 +43,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside className="w-64 glass-surface border-r border-white/5 flex flex-col">
         {/* Logo/Brand */}
-        <div className="p-6 border-b border-white/5">
-          <div className="flex items-center gap-3">
-            <img src="/brand/logo-icon.svg" alt="StormFusion OS" className="w-10 h-10" />
-            <div>
-              <h1 className="text-xl font-display font-bold text-gradient">
+        <div className="p-8 border-b border-white/5">
+          <div className="flex flex-col items-center gap-4">
+            <img src="/brand/logo-icon.svg" alt="StormFusion OS" className="w-48 h-48" />
+            <div className="text-center">
+              <h1 className="text-3xl font-display font-bold text-gradient">
                 StormFusion OS
               </h1>
-              <p className="text-xs text-text-muted mt-0.5">CRM System</p>
+              <p className="text-base text-text-muted mt-1">CRM System</p>
             </div>
           </div>
         </div>

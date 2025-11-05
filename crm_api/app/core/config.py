@@ -92,6 +92,15 @@ class Settings:
     SMTP_FROM: str = os.getenv("SMTP_FROM", "noreply@example.com")
     SMTP_TLS: bool = os.getenv("SMTP_TLS", "false").lower() == "true"
 
+    # Scrape Bot Configuration
+    SCRAPE_BOT_BASE_URL: str = os.getenv("SCRAPE_BOT_BASE_URL", "https://scrape-runner.internal:8443")
+    SCRAPE_BOT_API_KEY: str = os.getenv("SCRAPE_BOT_API_KEY", "")
+    SCRAPE_BOT_TIMEOUT: int = int(os.getenv("SCRAPE_BOT_TIMEOUT", "30"))
+    SCRAPE_BOT_VERIFY_TLS: bool = os.getenv("SCRAPE_BOT_VERIFY_TLS", "true").lower() == "true"
+    SCRAPE_BOT_MTLS_CERT_PATH: str = os.getenv("SCRAPE_BOT_MTLS_CERT_PATH", "")
+    SCRAPE_BOT_MTLS_KEY_PATH: str = os.getenv("SCRAPE_BOT_MTLS_KEY_PATH", "")
+    SCRAPE_BOT_CA_BUNDLE_PATH: str = os.getenv("SCRAPE_BOT_CA_BUNDLE_PATH", "")
+
     # Feature flags
     AUTO_REPLY_ENABLED: bool = os.getenv("AUTO_REPLY_ENABLED", "false").lower() == "true"
 

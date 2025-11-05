@@ -524,21 +524,25 @@ def get_competitors(
     is_active: Optional[bool] = Query(None, description="Filter by active status"),
     category: Optional[str] = Query(None, description="Filter by category"),
     priority: Optional[str] = Query(None, description="Filter by priority"),
+    page: int = Query(1, ge=1, description="Page number"),
+    page_size: int = Query(50, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db),
     claims: dict = Depends(require_manager_claims)
 ):
     """
-    Get list of tracked competitors.
+    Get list of tracked competitors with pagination.
 
     Args:
         is_active: Filter by active status
         category: Filter by category
         priority: Filter by priority
+        page: Page number
+        page_size: Items per page
         db: Database session
         claims: JWT claims
 
     Returns:
-        List of competitors
+        Paginated list of competitors
     """
     query = db.query(CompetitorModel)
 
@@ -552,11 +556,138 @@ def get_competitors(
     if priority:
         query = query.filter(CompetitorModel.priority == priority)
 
-    competitors = query.order_by(CompetitorModel.domain).all()
+    total = query.count()
+    competitors = query.order_by(CompetitorModel.domain).offset((page - 1) * page_size).limit(page_size).all()
 
     return CompetitorListResponse(
         competitors=[CompetitorResponse.model_validate(c) for c in competitors],
-        total=len(competitors)
+        total=total,
+        page=page,
+        page_size=page_size
+    )
+
+
+@router.post("/competitors", response_model=CompetitorResponse, status_code=status.HTTP_201_CREATED)
+def create_competitor(
+    competitor: CompetitorCreate,
+    db: Session = Depends(get_db),
+    claims: dict = Depends(require_manager_claims)
+):
+    """
+    Create a new competitor to track.
+
+    Args:
+        competitor: Competitor data
+        db: Database session
+        claims: JWT claims
+
+    Returns:
+        Created competitor
+
+    Raises:
+        HTTPException: 400 if competitor with domain already exists
+    """
+    # Check if competitor with this domain already exists
+    existing = db.query(CompetitorModel).filter_by(domain=competitor.domain).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Competitor with domain '{competitor.domain}' already exists"
+        )
+
+    new_competitor = CompetitorModel(**competitor.model_dump())
+    db.add(new_competitor)
+    db.commit()
+    db.refresh(new_competitor)
+
+    logger.info(
+        "competitor_created",
+        competitor_id=new_competitor.id,
+        domain=new_competitor.domain
+    )
+
+    return CompetitorResponse.model_validate(new_competitor)
+
+
+@router.put("/competitors/{competitor_id}", response_model=CompetitorResponse)
+def update_competitor(
+    competitor_id: int,
+    competitor_update: CompetitorUpdate,
+    db: Session = Depends(get_db),
+    claims: dict = Depends(require_manager_claims)
+):
+    """
+    Update a competitor's details.
+
+    Args:
+        competitor_id: Competitor ID
+        competitor_update: Fields to update
+        db: Database session
+        claims: JWT claims
+
+    Returns:
+        Updated competitor
+
+    Raises:
+        HTTPException: 404 if competitor not found
+    """
+    competitor = db.query(CompetitorModel).filter_by(id=competitor_id).first()
+
+    if not competitor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Competitor not found: {competitor_id}"
+        )
+
+    # Update fields
+    update_data = competitor_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(competitor, field, value)
+
+    db.commit()
+    db.refresh(competitor)
+
+    logger.info(
+        "competitor_updated",
+        competitor_id=competitor_id,
+        domain=competitor.domain
+    )
+
+    return CompetitorResponse.model_validate(competitor)
+
+
+@router.delete("/competitors/{competitor_id}")
+def delete_competitor(
+    competitor_id: int,
+    db: Session = Depends(get_db),
+    claims: dict = Depends(require_manager_claims)
+):
+    """
+    Delete a competitor.
+
+    Args:
+        competitor_id: Competitor ID
+        db: Database session
+        claims: JWT claims
+
+    Raises:
+        HTTPException: 404 if competitor not found
+    """
+    competitor = db.query(CompetitorModel).filter_by(id=competitor_id).first()
+
+    if not competitor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Competitor not found: {competitor_id}"
+        )
+
+    db.delete(competitor)
+    db.commit()
+
+    logger.info(
+        "competitor_deleted",
+        competitor_id=competitor_id,
+        domain=competitor.domain
     )
 
 

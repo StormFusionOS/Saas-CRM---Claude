@@ -16,7 +16,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.api.deps import require_owner_or_admin_claims
+from app.api.deps import require_manager_claims
 from app.db_models import TaskLogModel, TaskStatus
 import structlog
 
@@ -180,7 +180,7 @@ class JobProgressStream:
 async def stream_job_progress(
     job_id: str,
     db: Session = Depends(get_db),
-    claims: dict = Depends(require_owner_or_admin_claims)
+    claims: dict = Depends(require_manager_claims)
 ):
     """
     Stream job progress via Server-Sent Events (SSE).
@@ -228,7 +228,7 @@ async def stream_job_progress(
 async def stream_all_jobs(
     module: Optional[str] = Query(None, description="Filter by module (e.g., scrape_suite)"),
     db: Session = Depends(get_db),
-    claims: dict = Depends(require_owner_or_admin_claims)
+    claims: dict = Depends(require_manager_claims)
 ):
     """
     Stream updates for all active jobs.
@@ -279,7 +279,7 @@ async def stream_all_jobs(
 
                     # If new job or state changed, send update
                     if last_state is None or last_state != current_state:
-                        yield f"data: {json.dumps({
+                        data = json.dumps({
                             'event': 'job_update',
                             'job_id': job_id,
                             'task_name': job.task_name,
@@ -290,7 +290,8 @@ async def stream_all_jobs(
                             'items_failed': job.items_failed,
                             'started_at': job.started_at.isoformat() if job.started_at else None,
                             'timestamp': datetime.utcnow().isoformat()
-                        })}\n\n"
+                        })
+                        yield f"data: {data}\n\n"
 
                         tracked_jobs[job_id] = current_state
 
@@ -308,7 +309,7 @@ async def stream_all_jobs(
                     job_id = job.task_id
 
                     # Send completion event
-                    yield f"data: {json.dumps({
+                    data = json.dumps({
                         'event': 'job_completed',
                         'job_id': job_id,
                         'task_name': job.task_name,
@@ -321,7 +322,8 @@ async def stream_all_jobs(
                         'error_message': job.error_message,
                         'completed_at': job.completed_at.isoformat() if job.completed_at else None,
                         'timestamp': datetime.utcnow().isoformat()
-                    })}\n\n"
+                    })
+                    yield f"data: {data}\n\n"
 
                     # Remove from tracking
                     del tracked_jobs[job_id]

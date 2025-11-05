@@ -449,6 +449,10 @@ COLLECTION_SERP_RESULTS = "serp_results"
 COLLECTION_PROMPT_LIBRARY = "prompt_library"
 COLLECTION_KEYWORD_CLUSTERS = "keyword_clusters"
 
+# Scrape Suite Collections
+COLLECTION_SCRAPE_PAGES = "scrape_pages"  # Competitor page content embeddings
+COLLECTION_SERP_SNIPPETS = "serp_snippets"  # SERP snippet/answer embeddings
+
 
 # ==============================================================================
 # Helper: Initialize Default Collections
@@ -480,6 +484,16 @@ def initialize_collections(qdrant_host: str = "localhost", qdrant_port: int = 63
         },
         {
             "name": COLLECTION_KEYWORD_CLUSTERS,
+            "vector_size": 1536,
+            "distance": Distance.COSINE
+        },
+        {
+            "name": COLLECTION_SCRAPE_PAGES,
+            "vector_size": 1536,
+            "distance": Distance.COSINE
+        },
+        {
+            "name": COLLECTION_SERP_SNIPPETS,
             "vector_size": 1536,
             "distance": Distance.COSINE
         }

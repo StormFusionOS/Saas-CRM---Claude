@@ -132,6 +132,51 @@ class KeywordListResponse(BaseModel):
 
 
 # ==============================================================================
+# Competitors
+# ==============================================================================
+
+class CompetitorCreate(BaseModel):
+    """Request to create a new competitor."""
+    domain: str = Field(..., min_length=1, max_length=255)
+    name: str = Field(..., min_length=1, max_length=255)
+    category: Optional[str] = Field(None, max_length=100)
+    priority: str = Field(default='medium', pattern='^(low|medium|high|critical)$')
+    is_active: bool = True
+
+
+class CompetitorUpdate(BaseModel):
+    """Request to update competitor fields."""
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    category: Optional[str] = Field(None, max_length=100)
+    priority: Optional[str] = Field(None, pattern='^(low|medium|high|critical)$')
+    is_active: Optional[bool] = None
+
+
+class CompetitorResponse(BaseModel):
+    """Competitor details."""
+    id: int
+    domain: str
+    name: str
+    category: Optional[str] = None
+    priority: str
+    is_active: bool
+    last_scraped: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class CompetitorListResponse(BaseModel):
+    """Paginated list of competitors."""
+    competitors: List[CompetitorResponse]
+    total: int
+    page: int
+    page_size: int
+
+
+# ==============================================================================
 # SERP Snapshots & Results
 # ==============================================================================
 

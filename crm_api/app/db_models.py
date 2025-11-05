@@ -858,6 +858,151 @@ class CompetitorPageModel(Base):
     )
 
 
+# ============================================================================
+# SCRAPE SUITE MODELS (Additional)
+# ============================================================================
+
+class SerpResultModel(Base):
+    """
+    Individual SERP results for each snapshot.
+    Stores all positions for a query, not just ours.
+    """
+
+    __tablename__ = "serp_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    snapshot_id = Column(Integer, ForeignKey("serp_snapshots.id"), nullable=False, index=True)
+
+    # Position data
+    rank = Column(Integer, nullable=False)
+    url = Column(String(2000), nullable=False)
+    domain = Column(String(255), nullable=False, index=True)
+    title = Column(String(500))
+    snippet = Column(Text)
+
+    # Ownership
+    is_ours = Column(Boolean, default=False, index=True)
+
+    # Additional data (SERP features, rich results, etc.)
+    data = Column(JSON)
+
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index('idx_serp_results_snapshot', 'snapshot_id'),
+        Index('idx_serp_results_domain_rank', 'domain', 'rank'),
+    )
+
+
+class CompetitorModel(Base):
+    """
+    Competitor sites being monitored.
+    Central table for organizing competitor tracking.
+    """
+
+    __tablename__ = "competitors"
+
+    id = Column(Integer, primary_key=True, index=True)
+    domain = Column(String(255), unique=True, nullable=False, index=True)
+    name = Column(String(255), nullable=False)
+    category = Column(String(100))
+    priority = Column(String(20), default='medium')  # low, medium, high, critical
+
+    # Status
+    is_active = Column(Boolean, default=True, index=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+    last_scraped = Column(DateTime)
+
+    __table_args__ = (
+        Index('idx_competitors_active_priority', 'is_active', 'priority'),
+    )
+
+
+class ReferringDomainModel(Base):
+    """
+    Domain-level backlink metrics aggregation.
+    Tracks unique domains linking to us.
+    """
+
+    __tablename__ = "referring_domains"
+
+    id = Column(Integer, primary_key=True, index=True)
+    domain = Column(String(255), unique=True, nullable=False, index=True)
+
+    # Metrics
+    backlink_count = Column(Integer, default=0)
+    inbody_link_count = Column(Integer, default=0)  # Links in main content
+    authority_score = Column(Integer)  # 0-100 domain authority
+
+    # Status
+    last_updated = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index('idx_referring_domains_authority', 'authority_score'),
+    )
+
+
+class PageAuditModel(Base):
+    """
+    Technical SEO audits for specific pages.
+    Stores audit run metadata and overall metrics.
+
+    TODO (Step 15): Partition by audit_date for high-volume data.
+    """
+
+    __tablename__ = "page_audits"
+
+    id = Column(Integer, primary_key=True, index=True)
+    page_url = Column(String(2000), nullable=False, index=True)
+    audit_date = Column(DateTime, nullable=False, index=True)
+
+    # Status
+    status_code = Column(Integer)
+
+    # Performance metrics (lightweight proxy)
+    performance_proxy = Column(JSON)  # {load_time, size, requests_count, etc.}
+
+    # Summary
+    issues_found = Column(Integer, default=0)
+    notes = Column(Text)
+
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index('idx_page_audits_url_date', 'page_url', 'audit_date'),
+    )
+
+
+class PageAuditIssueModel(Base):
+    """
+    Individual issues found during page audits.
+    Linked to PageAuditModel.
+    """
+
+    __tablename__ = "page_audit_issues"
+
+    id = Column(Integer, primary_key=True, index=True)
+    audit_id = Column(Integer, ForeignKey("page_audits.id"), nullable=False, index=True)
+
+    # Issue details
+    type = Column(String(100), nullable=False, index=True)  # missing_meta, slow_load, broken_link
+    description = Column(Text)
+    severity = Column(String(20), nullable=False, index=True)  # low, medium, high, critical
+
+    # Resolution
+    fixed = Column(Boolean, default=False, index=True)
+    fixed_date = Column(DateTime)
+
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index('idx_audit_issues_audit_severity', 'audit_id', 'severity'),
+        Index('idx_audit_issues_fixed', 'fixed', 'type'),
+    )
+
+
 # Export all models
 __all__ = [
     "Base",
@@ -887,6 +1032,12 @@ __all__ = [
     "InternalLinkSuggestionModel",
     "CitationModel",
     "CompetitorPageModel",
+    # Scrape Suite (Additional)
+    "SerpResultModel",
+    "CompetitorModel",
+    "ReferringDomainModel",
+    "PageAuditModel",
+    "PageAuditIssueModel",
     # Enums
     "ChangeStatus",
     "TaskPriority",

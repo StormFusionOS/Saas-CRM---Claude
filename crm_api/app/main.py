@@ -134,6 +134,14 @@ def create_app() -> FastAPI:
     from app.api.routes import prompt_runner
     app.include_router(prompt_runner.router, prefix=settings.API_PREFIX)
 
+    # Scrape Suite router - SEO monitoring, competitor tracking, backlinks, citations (staff endpoints)
+    from app.api.routes import scrape
+    app.include_router(scrape.router, prefix=settings.API_PREFIX)
+
+    # Scrape Suite SSE router - Real-time job progress streaming (staff endpoints)
+    from app.api.routes import scrape_sse
+    app.include_router(scrape_sse.router, prefix=settings.API_PREFIX)
+
     app.include_router(webhooks.router)  # No prefix for webhooks
 
     # Health check endpoint

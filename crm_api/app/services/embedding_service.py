@@ -11,6 +11,7 @@ Used for semantic search and RAG context retrieval.
 from typing import List, Dict, Any, Optional
 import structlog
 from enum import Enum
+from .qdrant_service import QdrantService, COLLECTION_SCRAPE_PAGES, COLLECTION_SERP_SNIPPETS
 
 logger = structlog.get_logger(__name__)
 
@@ -33,7 +34,8 @@ class EmbeddingService:
         self,
         provider: EmbeddingProvider = EmbeddingProvider.MOCK,
         model_name: Optional[str] = None,
-        api_key: Optional[str] = None
+        api_key: Optional[str] = None,
+        qdrant_service: Optional[QdrantService] = None
     ):
         """
         Initialize embedding service.
@@ -42,10 +44,12 @@ class EmbeddingService:
             provider: Embedding provider to use
             model_name: Specific model (e.g., 'text-embedding-ada-002')
             api_key: API key for provider
+            qdrant_service: Qdrant service instance for storing embeddings
         """
         self.provider = provider
         self.model_name = model_name or self._default_model()
         self.api_key = api_key
+        self.qdrant_service = qdrant_service
         self.logger = logger.bind(service="embedding", provider=provider)
 
         # Initialize client based on provider
@@ -235,6 +239,164 @@ class EmbeddingService:
 
         return text[:max_chars] + "..."
 
+    # ==========================================================================
+    # Scrape Suite Methods
+    # ==========================================================================
+
+    def embed_texts(self, texts: List[str]) -> List[List[float]]:
+        """
+        Alias for embed_batch for Scrape Suite compatibility.
+
+        Args:
+            texts: List of texts to embed
+
+        Returns:
+            List of embedding vectors
+        """
+        return self.embed_batch(texts)
+
+    def upsert_page_embedding(
+        self,
+        page_id: int,
+        site_id: int,
+        url: str,
+        title: str,
+        page_type: str,
+        chunks: List[str]
+    ) -> bool:
+        """
+        Embed and upsert competitor page content to Qdrant.
+
+        Args:
+            page_id: Database ID of the page
+            site_id: ID of the competitor site
+            url: Page URL
+            title: Page title
+            page_type: Type of page (homepage, blog, product, etc.)
+            chunks: List of text chunks from the page
+
+        Returns:
+            True on success
+        """
+        if not self.qdrant_service:
+            self.logger.warning("qdrant_service_not_configured")
+            return False
+
+        if not chunks:
+            self.logger.warning("no_chunks_to_embed", page_id=page_id)
+            return False
+
+        try:
+            # Generate embeddings for all chunks
+            embeddings = self.embed_texts(chunks)
+
+            # Upsert each chunk with metadata
+            points = []
+            for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+                point_id = f"page_{page_id}_chunk_{idx}"
+                payload = {
+                    "page_id": page_id,
+                    "site_id": site_id,
+                    "url": url,
+                    "title": title,
+                    "page_type": page_type,
+                    "chunk_index": idx,
+                    "chunk_text": chunk,
+                    "text": chunk  # For RAG compatibility
+                }
+
+                points.append({
+                    "id": point_id,
+                    "embedding": embedding,
+                    "payload": payload
+                })
+
+            self.qdrant_service.upsert_embeddings_batch(
+                collection_name=COLLECTION_SCRAPE_PAGES,
+                points=points
+            )
+
+            self.logger.info(
+                "page_embeddings_upserted",
+                page_id=page_id,
+                chunks=len(chunks)
+            )
+            return True
+
+        except Exception as e:
+            self.logger.error(
+                "page_embedding_upsert_failed",
+                page_id=page_id,
+                error=str(e)
+            )
+            return False
+
+    def upsert_serp_embedding(
+        self,
+        result_id: int,
+        snapshot_id: int,
+        url: str,
+        snippet: str,
+        query: str
+    ) -> bool:
+        """
+        Embed and upsert SERP snippet to Qdrant.
+
+        Args:
+            result_id: Database ID of the SERP result
+            snapshot_id: ID of the SERP snapshot
+            url: Result URL
+            snippet: SERP snippet text
+            query: Search query that produced this result
+
+        Returns:
+            True on success
+        """
+        if not self.qdrant_service:
+            self.logger.warning("qdrant_service_not_configured")
+            return False
+
+        if not snippet or not snippet.strip():
+            self.logger.warning("empty_snippet", result_id=result_id)
+            return False
+
+        try:
+            # Combine query context with snippet for better semantic search
+            text_to_embed = f"Query: {query}\n\nSnippet: {snippet}"
+            embedding = self.embed_text(text_to_embed)
+
+            # Upsert to Qdrant
+            payload = {
+                "result_id": result_id,
+                "snapshot_id": snapshot_id,
+                "url": url,
+                "snippet": snippet,
+                "query": query,
+                "text": snippet  # For RAG compatibility
+            }
+
+            self.qdrant_service.upsert_embedding(
+                collection_name=COLLECTION_SERP_SNIPPETS,
+                point_id=f"serp_{result_id}",
+                embedding=embedding,
+                payload=payload
+            )
+
+            self.logger.info(
+                "serp_embedding_upserted",
+                result_id=result_id,
+                query=query
+            )
+            return True
+
+        except Exception as e:
+            self.logger.error(
+                "serp_embedding_upsert_failed",
+                result_id=result_id,
+                error=str(e)
+            )
+            return False
+
 
 # ==============================================================================
 # Global Instance (Singleton Pattern)
@@ -246,7 +408,8 @@ _embedding_service: Optional[EmbeddingService] = None
 def get_embedding_service(
     provider: EmbeddingProvider = EmbeddingProvider.MOCK,
     model_name: Optional[str] = None,
-    api_key: Optional[str] = None
+    api_key: Optional[str] = None,
+    qdrant_service: Optional[QdrantService] = None
 ) -> EmbeddingService:
     """
     Get or create embedding service instance.
@@ -255,6 +418,7 @@ def get_embedding_service(
         provider: Embedding provider
         model_name: Model to use
         api_key: API key
+        qdrant_service: Qdrant service instance
 
     Returns:
         EmbeddingService instance
@@ -265,7 +429,8 @@ def get_embedding_service(
         _embedding_service = EmbeddingService(
             provider=provider,
             model_name=model_name,
-            api_key=api_key
+            api_key=api_key,
+            qdrant_service=qdrant_service
         )
 
     return _embedding_service
