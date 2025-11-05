@@ -13,8 +13,8 @@
  */
 
 import React from 'react';
-import { Input as ShadcnInput } from './input';
-import { Label } from './label';
+import { Input as ShadcnInput } from './shadcn/input';
+import { Label } from './shadcn/label';
 import { cn } from '@/lib/utils';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {

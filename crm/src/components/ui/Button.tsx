@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { Button as ShadcnButton } from './button';
+import { Button as ShadcnButton } from './shadcn/button';
 import { cn } from '@/lib/utils';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

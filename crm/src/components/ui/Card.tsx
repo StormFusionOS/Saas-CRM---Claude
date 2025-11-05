@@ -13,12 +13,12 @@
  */
 
 import React from 'react';
-import { Card as ShadcnCard } from './card';
+import { Card as ShadcnCard } from './shadcn/card';
 import { cn } from '@/lib/utils';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'glass' | 'neon';
-  padding?: 'sm' | 'md' | 'lg';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
   animate?: 'none' | 'fade-in' | 'slide-in-up' | 'scale-in';
   hover?: boolean;
 }
@@ -34,6 +34,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
     // Padding classes
     const paddingClasses = {
+      none: 'p-0',
       sm: 'p-4',
       md: 'p-6',
       lg: 'p-8',
