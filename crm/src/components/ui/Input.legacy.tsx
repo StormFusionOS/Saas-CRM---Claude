@@ -5,17 +5,7 @@
  * This file is part of the RiverCityClean SaaS CRM system.
  */
 
-/**
- * Input Component Wrapper
- *
- * Wraps shadcn/ui Input with our existing API for backward compatibility.
- * Preserves label, error, and helperText features.
- */
-
 import React from 'react';
-import { Input as ShadcnInput } from './input';
-import { Label } from './label';
-import { cn } from '@/lib/utils';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -26,27 +16,34 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, helperText, fullWidth = true, className = '', ...props }, ref) => {
-    const inputClasses = cn(
-      // Add our custom focus-ring style
-      'focus-ring hover:border-border-strong',
-      error && 'border-error focus:ring-error',
-      className
-    );
+    const inputClasses = [
+      'px-4 py-2',
+      'bg-bg-elev text-text-primary',
+      'border border-border-default',
+      'rounded-base',
+      'transition-all duration-base',
+      'placeholder:text-text-muted',
+      'focus-ring',
+      'hover:border-border-strong',
+      'disabled:opacity-50 disabled:cursor-not-allowed',
+      error ? 'border-error focus:ring-error' : '',
+      fullWidth ? 'w-full' : '',
+      className,
+    ].filter(Boolean).join(' ');
 
     return (
-      <div className={cn(fullWidth && 'w-full')}>
+      <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <Label className="block text-sm font-medium text-text-primary mb-2">
+          <label className="block text-sm font-medium text-text-primary mb-2">
             {label}
             {props.required && <span className="text-error ml-1">*</span>}
-          </Label>
+          </label>
         )}
-        <ShadcnInput
+        <input
           ref={ref}
           className={inputClasses}
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? `${props.id}-error` : helperText ? `${props.id}-helper` : undefined}
-          aria-label={label}
           {...props}
         />
         {error && (

@@ -5,41 +5,30 @@
  * This file is part of the RiverCityClean SaaS CRM system.
  */
 
-/**
- * Card Component Wrapper
- *
- * Wraps shadcn/ui Card with our existing API for backward compatibility.
- * Adds our custom variants (glass, neon) on top of shadcn's base card.
- */
-
 import React from 'react';
-import { Card as ShadcnCard } from './card';
-import { cn } from '@/lib/utils';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'glass' | 'neon';
   padding?: 'sm' | 'md' | 'lg';
   animate?: 'none' | 'fade-in' | 'slide-in-up' | 'scale-in';
-  hover?: boolean;
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ variant = 'default', padding = 'md', animate = 'none', hover = false, className = '', children, ...props }, ref) => {
-    // Variant-specific classes
+  ({ variant = 'default', padding = 'md', animate = 'none', className = '', children, ...props }, ref) => {
+    const baseClasses = 'rounded-lg transition-all duration-base';
+
     const variantClasses = {
-      default: '', // Use shadcn default
-      glass: 'glass-surface shadow-md backdrop-blur-md bg-opacity-80',
-      neon: 'border-2 border-accent neon-border shadow-glow-cyan',
+      default: 'bg-bg-elev border border-border-default shadow-base',
+      glass: 'glass-surface shadow-md',
+      neon: 'bg-bg-elev border-2 border-accent neon-border shadow-glow-cyan',
     };
 
-    // Padding classes
     const paddingClasses = {
       sm: 'p-4',
       md: 'p-6',
       lg: 'p-8',
     };
 
-    // Animation classes
     const animationClasses = {
       none: '',
       'fade-in': 'animate-fade-in',
@@ -47,18 +36,18 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       'scale-in': 'animate-scale-in',
     };
 
-    const customClasses = cn(
+    const combinedClasses = [
+      baseClasses,
       variantClasses[variant],
       paddingClasses[padding],
       animationClasses[animate],
-      hover && 'hover:scale-[1.02] hover:shadow-lg transition-all cursor-pointer',
-      className
-    );
+      className,
+    ].filter(Boolean).join(' ');
 
     return (
-      <ShadcnCard ref={ref} className={customClasses} {...props}>
+      <div ref={ref} className={combinedClasses} {...props}>
         {children}
-      </ShadcnCard>
+      </div>
     );
   }
 );

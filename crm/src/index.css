@@ -117,6 +117,62 @@
     outline: var(--ring-width) solid var(--ring-color);
     outline-offset: var(--ring-offset);
   }
+  :root {
+    /* shadcn/ui theme tokens mapped to our design system */
+    /* Dark theme is default */
+    --background: 225 48% 8%;        /* --color-bg-base: #0A0F1C */
+    --foreground: 0 0% 100%;         /* --color-text-primary: #FFFFFF */
+    --card: 225 40% 12%;             /* --color-bg-elev: #12192B */
+    --card-foreground: 0 0% 100%;    /* --color-text-primary */
+    --popover: 225 40% 12%;          /* --color-bg-elev */
+    --popover-foreground: 0 0% 100%; /* --color-text-primary */
+    --primary: 213 100% 44%;         /* --color-storm-blue: #005AE0 */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --secondary: 197 100% 50%;       /* --color-electric-cyan: #00B7FD */
+    --secondary-foreground: 225 48% 8%; /* Dark text on cyan */
+    --muted: 207 13% 54%;            /* --color-steel-gray: #7A8B99 */
+    --muted-foreground: 210 14% 66%; /* --color-text-secondary: #A8B4C4 */
+    --accent: 197 100% 50%;          /* --color-accent: electric-cyan */
+    --accent-foreground: 225 48% 8%; /* Dark text on accent */
+    --destructive: 0 84% 60%;        /* --color-error: #EF4444 */
+    --destructive-foreground: 0 0% 100%; /* White text on error */
+    --border: 0 0% 12%;              /* --color-border-default (alpha to solid) */
+    --input: 225 35% 15%;            /* --color-bg-hover: #1A2538 */
+    --ring: 197 100% 50%;            /* --color-electric-cyan for focus */
+    --chart-1: 213 100% 44%;         /* storm-blue */
+    --chart-2: 197 100% 50%;         /* electric-cyan */
+    --chart-3: 142 71% 45%;          /* success green */
+    --chart-4: 38 92% 50%;           /* warning orange */
+    --chart-5: 0 84% 60%;            /* error red */
+    --radius: 0.75rem;               /* --radius-base: 12px */
+  }
+  .dark {
+    /* Dark mode - same as root since we're dark by default */
+    --background: 225 48% 8%;
+    --foreground: 0 0% 100%;
+    --card: 225 40% 12%;
+    --card-foreground: 0 0% 100%;
+    --popover: 225 40% 12%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 213 100% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 197 100% 50%;
+    --secondary-foreground: 225 48% 8%;
+    --muted: 207 13% 54%;
+    --muted-foreground: 210 14% 66%;
+    --accent: 197 100% 50%;
+    --accent-foreground: 225 48% 8%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 12%;
+    --input: 225 35% 15%;
+    --ring: 197 100% 50%;
+    --chart-1: 213 100% 44%;
+    --chart-2: 197 100% 50%;
+    --chart-3: 142 71% 45%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 0 84% 60%;
+  }
 }
 
 /* === Custom Utilities === */
@@ -170,5 +226,15 @@
       transform: translateX(0);
       opacity: 1;
     }
+  }
+}
+/*---break---
+ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

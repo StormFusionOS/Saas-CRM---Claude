@@ -5,45 +5,64 @@
  * This file is part of the RiverCityClean SaaS CRM system.
  */
 
+/**
+ * Button Component Wrapper
+ *
+ * Wraps shadcn/ui Button with our existing API for backward compatibility.
+ * Maps our custom variants to shadcn variants while preserving props.
+ */
+
 import React from 'react';
+import { Button as ShadcnButton } from './button';
+import { cn } from '@/lib/utils';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg' | 'none';
   fullWidth?: boolean;
+  icon?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', fullWidth = false, className = '', children, ...props }, ref) => {
-    const baseClasses = 'inline-flex items-center justify-center font-medium rounded-base transition-all duration-base focus-ring disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]';
+  ({ variant = 'primary', size = 'md', fullWidth = false, icon, className = '', children, ...props }, ref) => {
+    // Map our variants to shadcn variants
+    const shadcnVariant =
+      variant === 'primary' ? 'default' :
+      variant === 'secondary' ? 'secondary' :
+      variant === 'outline' ? 'outline' :
+      variant === 'danger' ? 'destructive' :
+      'ghost';
 
-    const variantClasses = {
-      primary: 'bg-primary hover:bg-primary-hover active:bg-primary-active text-text-inverse shadow-sm glow-hover',
-      secondary: 'bg-bg-elev hover:bg-bg-hover active:bg-bg-active text-text-primary border border-border-default',
-      outline: 'bg-transparent hover:bg-bg-hover active:bg-bg-active text-text-primary border border-border-strong',
-      ghost: 'bg-transparent hover:bg-bg-hover active:bg-bg-active text-text-primary',
-    };
+    // Map our sizes to shadcn sizes
+    const shadcnSize =
+      size === 'none' ? 'sm' :
+      size === 'md' ? 'default' :
+      size as 'default' | 'sm' | 'lg' | 'icon';
 
-    const sizeClasses = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg',
-    };
-
-    const widthClass = fullWidth ? 'w-full' : '';
-
-    const combinedClasses = [
-      baseClasses,
-      variantClasses[variant],
-      sizeClasses[size],
-      widthClass,
-      className,
-    ].filter(Boolean).join(' ');
+    // Add custom classes for our design system
+    const customClasses = cn(
+      // Preserve our hover/active animations
+      'hover:scale-[1.02] active:scale-[0.98] transition-transform',
+      // Add glow effect for primary buttons
+      variant === 'primary' && 'glow-hover shadow-sm',
+      // Full width
+      fullWidth && 'w-full',
+      // Icon spacing
+      icon && 'gap-2',
+      className
+    );
 
     return (
-      <button ref={ref} className={combinedClasses} {...props}>
+      <ShadcnButton
+        ref={ref}
+        variant={shadcnVariant}
+        size={shadcnSize}
+        className={customClasses}
+        {...props}
+      >
+        {icon}
         {children}
-      </button>
+      </ShadcnButton>
     );
   }
 );
