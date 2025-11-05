@@ -12,6 +12,7 @@ import Shell from '../components/layout/Shell';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import LeadsPage from '../pages/LeadsPage';
+import ContactsPage from '../pages/ContactsPage';
 import InboxPage from '../pages/InboxPage';
 import VisualCheckPage from '../pages/VisualCheckPage';
 import QuotesInvoicesPage from '../pages/QuotesInvoicesPage';
@@ -82,6 +83,7 @@ function App() {
             {/* Legacy/General Routes */}
             <Route path="/dashboard" element={<Shell><DashboardPage /></Shell>} />
             <Route path="/leads" element={<Shell><LeadsPage /></Shell>} />
+            <Route path="/contacts" element={<Shell><ContactsPage /></Shell>} />
             <Route path="/estimator" element={<Shell><EstimatorPage /></Shell>} />
             <Route path="/inbox" element={<Shell><InboxPage /></Shell>} />
             <Route path="/quotes" element={<Shell><QuotesInvoicesPage /></Shell>} />
