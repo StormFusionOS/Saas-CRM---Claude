@@ -6,10 +6,22 @@
  */
 
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../lib/auth-context';
 import { PWAProvider } from '../components/pwa/PWAProvider';
 import { Toaster } from '../components/ui/shadcn/toaster';
 import Shell from '../components/layout/Shell';
+
+// Create QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5000,
+    },
+  },
+});
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import LeadsPage from '../pages/LeadsPage';
@@ -53,9 +65,10 @@ import ScrapeSettingsPage from '../pages/scrape-suite/SettingsPage';
 function App() {
   return (
     <div data-theme="dark">
-      <AuthProvider>
-        <PWAProvider>
-          <Routes>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <PWAProvider>
+            <Routes>
             <Route path="/login" element={<LoginPage />} />
 
             {/* Suite Dashboards */}
@@ -102,6 +115,7 @@ function App() {
           <Toaster />
         </PWAProvider>
       </AuthProvider>
+      </QueryClientProvider>
     </div>
   );
 }
