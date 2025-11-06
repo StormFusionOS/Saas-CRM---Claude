@@ -103,7 +103,7 @@ export function useTaskLogs(params?: {
       setLoading(true);
       setError(null);
       const result = await governanceAPI.getTaskLogs(params);
-      setData(result.tasks);
+      setData(result);
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to fetch task logs');
       console.error('Error fetching task logs:', err);
@@ -136,7 +136,7 @@ export function useAuditIssues(params?: {
       setLoading(true);
       setError(null);
       const result = await governanceAPI.getAuditIssues(params);
-      setData(result.issues);
+      setData(result);
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to fetch audit issues');
       console.error('Error fetching audit issues:', err);

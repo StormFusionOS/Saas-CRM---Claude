@@ -125,7 +125,7 @@ export const governanceAPI = {
     limit?: number;
     offset?: number;
   }): Promise<{ changes: ChangeLog[]; total: number }> => {
-    const response = await apiClient.get('/governance/change-log', { params });
+    const response = await apiClient.get('/change-log', { params });
     return response.data;
   },
 
@@ -133,7 +133,7 @@ export const governanceAPI = {
    * Get single change log entry by ID
    */
   getChangeLog: async (changeId: string): Promise<ChangeLog> => {
-    const response = await apiClient.get(`/governance/change-log/${changeId}`);
+    const response = await apiClient.get(`/change-log/${changeId}`);
     return response.data;
   },
 
@@ -141,7 +141,7 @@ export const governanceAPI = {
    * Approve a change
    */
   approveChange: async (changeId: string, reason?: string): Promise<ChangeLog> => {
-    const response = await apiClient.put(`/governance/change-log/${changeId}/review`, {
+    const response = await apiClient.put(`/change-log/${changeId}/review`, {
       status: 'approved',
       decision_reason: reason,
     });
@@ -152,7 +152,7 @@ export const governanceAPI = {
    * Reject a change
    */
   rejectChange: async (changeId: string, reason: string): Promise<ChangeLog> => {
-    const response = await apiClient.put(`/governance/change-log/${changeId}/review`, {
+    const response = await apiClient.put(`/change-log/${changeId}/review`, {
       status: 'rejected',
       decision_reason: reason,
     });
@@ -163,7 +163,7 @@ export const governanceAPI = {
    * Execute an approved change
    */
   executeChange: async (changeId: string): Promise<ChangeLog> => {
-    const response = await apiClient.post(`/governance/change-log/${changeId}/execute`);
+    const response = await apiClient.post(`/change-log/${changeId}/execute`);
     return response.data;
   },
 
@@ -171,7 +171,7 @@ export const governanceAPI = {
    * Revert an executed change
    */
   revertChange: async (changeId: string, reason: string): Promise<ChangeLog> => {
-    const response = await apiClient.post(`/governance/change-log/${changeId}/revert`, {
+    const response = await apiClient.post(`/change-log/${changeId}/revert`, {
       revert_reason: reason,
     });
     return response.data;
@@ -189,8 +189,8 @@ export const governanceAPI = {
     job_name?: string;
     limit?: number;
     offset?: number;
-  }): Promise<{ tasks: TaskLog[]; total: number }> => {
-    const response = await apiClient.get('/governance/task-log', { params });
+  }): Promise<TaskLog[]> => {
+    const response = await apiClient.get('/task-logs', { params });
     return response.data;
   },
 
@@ -198,7 +198,7 @@ export const governanceAPI = {
    * Get single task log entry by job ID
    */
   getTaskLog: async (jobId: string): Promise<TaskLog> => {
-    const response = await apiClient.get(`/governance/task-log/${jobId}`);
+    const response = await apiClient.get(`/task-logs/${jobId}`);
     return response.data;
   },
 
@@ -214,8 +214,8 @@ export const governanceAPI = {
     severity?: string;
     limit?: number;
     offset?: number;
-  }): Promise<{ issues: AuditIssue[]; total: number }> => {
-    const response = await apiClient.get('/governance/audit-issues', { params });
+  }): Promise<AuditIssue[]> => {
+    const response = await apiClient.get('/audit-issues', { params });
     return response.data;
   },
 
@@ -223,7 +223,7 @@ export const governanceAPI = {
    * Get single audit issue by ID
    */
   getAuditIssue: async (issueId: number): Promise<AuditIssue> => {
-    const response = await apiClient.get(`/governance/audit-issues/${issueId}`);
+    const response = await apiClient.get(`/audit-issues/${issueId}`);
     return response.data;
   },
 
@@ -231,7 +231,7 @@ export const governanceAPI = {
    * Acknowledge an audit issue
    */
   acknowledgeIssue: async (issueId: number): Promise<AuditIssue> => {
-    const response = await apiClient.put(`/governance/audit-issues/${issueId}`, {
+    const response = await apiClient.put(`/audit-issues/${issueId}`, {
       status: 'acknowledged',
     });
     return response.data;
@@ -241,7 +241,7 @@ export const governanceAPI = {
    * Resolve an audit issue
    */
   resolveIssue: async (issueId: number, notes?: string): Promise<AuditIssue> => {
-    const response = await apiClient.put(`/governance/audit-issues/${issueId}`, {
+    const response = await apiClient.put(`/audit-issues/${issueId}`, {
       status: 'resolved',
       resolution_notes: notes,
     });
@@ -252,7 +252,7 @@ export const governanceAPI = {
    * Ignore an audit issue
    */
   ignoreIssue: async (issueId: number, notes?: string): Promise<AuditIssue> => {
-    const response = await apiClient.put(`/governance/audit-issues/${issueId}`, {
+    const response = await apiClient.put(`/audit-issues/${issueId}`, {
       status: 'ignored',
       resolution_notes: notes,
     });
@@ -267,7 +267,7 @@ export const governanceAPI = {
    * Get all module configurations
    */
   getModuleConfigs: async (): Promise<ModuleConfig[]> => {
-    const response = await apiClient.get('/governance/modules');
+    const response = await apiClient.get('/module-config');
     return response.data;
   },
 
@@ -275,7 +275,7 @@ export const governanceAPI = {
    * Get single module configuration
    */
   getModuleConfig: async (module: string): Promise<ModuleConfig> => {
-    const response = await apiClient.get(`/governance/modules/${module}`);
+    const response = await apiClient.get(`/module-config/${module}`);
     return response.data;
   },
 
@@ -286,7 +286,7 @@ export const governanceAPI = {
     module: string,
     updates: Partial<ModuleConfig>
   ): Promise<ModuleConfig> => {
-    const response = await apiClient.put(`/governance/modules/${module}`, updates);
+    const response = await apiClient.put(`/module-config/${module}`, updates);
     return response.data;
   },
 
@@ -294,7 +294,7 @@ export const governanceAPI = {
    * Graduate module to auto mode
    */
   graduateModule: async (module: string, notes?: string): Promise<ModuleConfig> => {
-    const response = await apiClient.post(`/governance/modules/${module}/graduate`, {
+    const response = await apiClient.post(`/module-config/${module}/graduate`, {
       graduation_notes: notes,
     });
     return response.data;
@@ -304,7 +304,7 @@ export const governanceAPI = {
    * Rollback module to review mode
    */
   rollbackModule: async (module: string, reason: string): Promise<ModuleConfig> => {
-    const response = await apiClient.post(`/governance/modules/${module}/rollback`, {
+    const response = await apiClient.post(`/module-config/${module}/rollback-to-review`, {
       rollback_reason: reason,
     });
     return response.data;
