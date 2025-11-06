@@ -125,7 +125,7 @@ export const governanceAPI = {
     limit?: number;
     offset?: number;
   }): Promise<{ changes: ChangeLog[]; total: number }> => {
-    const response = await apiClient.get('/change-log', { params });
+    const response = await apiClient.get('/governance/change-log', { params });
     return response.data;
   },
 
@@ -133,7 +133,7 @@ export const governanceAPI = {
    * Get single change log entry by ID
    */
   getChangeLog: async (changeId: string): Promise<ChangeLog> => {
-    const response = await apiClient.get(`/change-log/${changeId}`);
+    const response = await apiClient.get(`/governance/change-log/${changeId}`);
     return response.data;
   },
 
@@ -141,7 +141,7 @@ export const governanceAPI = {
    * Approve a change
    */
   approveChange: async (changeId: string, reason?: string): Promise<ChangeLog> => {
-    const response = await apiClient.put(`/change-log/${changeId}/review`, {
+    const response = await apiClient.put(`/governance/change-log/${changeId}/review`, {
       status: 'approved',
       decision_reason: reason,
     });
@@ -152,7 +152,7 @@ export const governanceAPI = {
    * Reject a change
    */
   rejectChange: async (changeId: string, reason: string): Promise<ChangeLog> => {
-    const response = await apiClient.put(`/change-log/${changeId}/review`, {
+    const response = await apiClient.put(`/governance/change-log/${changeId}/review`, {
       status: 'rejected',
       decision_reason: reason,
     });
@@ -163,7 +163,7 @@ export const governanceAPI = {
    * Execute an approved change
    */
   executeChange: async (changeId: string): Promise<ChangeLog> => {
-    const response = await apiClient.post(`/change-log/${changeId}/execute`);
+    const response = await apiClient.post(`/governance/change-log/${changeId}/execute`);
     return response.data;
   },
 
@@ -171,7 +171,7 @@ export const governanceAPI = {
    * Revert an executed change
    */
   revertChange: async (changeId: string, reason: string): Promise<ChangeLog> => {
-    const response = await apiClient.post(`/change-log/${changeId}/revert`, {
+    const response = await apiClient.post(`/governance/change-log/${changeId}/revert`, {
       revert_reason: reason,
     });
     return response.data;
