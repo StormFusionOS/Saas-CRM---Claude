@@ -52,6 +52,15 @@ import AIGovernancePage from '../pages/AIGovernancePage';
 import AIJobsPage from '../pages/AIJobsPage';
 import AIContextPage from '../pages/AIContextPage';
 import PromptRunnerPage from '../pages/PromptRunnerPage';
+import SnippetOptimizerPage from '../pages/SnippetOptimizerPage';
+import FAQPAAGeneratorPage from '../pages/FAQPAAGeneratorPage';
+import MetaCTRTestsPage from '../pages/MetaCTRTestsPage';
+import ContentClusterPlannerPage from '../pages/ContentClusterPlannerPage';
+import InternalLinkingAssistantPage from '../pages/InternalLinkingAssistantPage';
+import BacklinkGapFinderPage from '../pages/BacklinkGapFinderPage';
+import KeywordFunnelPage from '../pages/KeywordFunnelPage';
+import AnomalyExplainerPage from '../pages/AnomalyExplainerPage';
+import SchemaGeneratorPage from '../pages/SchemaGeneratorPage';
 // Scrape Suite Pages
 import ScrapeDashboard from '../pages/scrape-suite/DashboardPage';
 import ScrapeKeywordsPage from '../pages/scrape-suite/KeywordsPage';
@@ -78,6 +87,15 @@ function App() {
             <Route path="/ai/jobs" element={<Shell><AIJobsPage /></Shell>} />
             <Route path="/ai/prompt-runner" element={<Shell><PromptRunnerPage /></Shell>} />
             <Route path="/ai/context" element={<Shell><AIContextPage /></Shell>} />
+            <Route path="/ai/snippet-optimizer" element={<Shell><SnippetOptimizerPage /></Shell>} />
+            <Route path="/ai/faq-paa" element={<Shell><FAQPAAGeneratorPage /></Shell>} />
+            <Route path="/ai/meta-ctr" element={<Shell><MetaCTRTestsPage /></Shell>} />
+            <Route path="/ai/clusters" element={<Shell><ContentClusterPlannerPage /></Shell>} />
+            <Route path="/ai/internal-linking" element={<Shell><InternalLinkingAssistantPage /></Shell>} />
+            <Route path="/ai/backlink-gap" element={<Shell><BacklinkGapFinderPage /></Shell>} />
+            <Route path="/ai/keywords" element={<Shell><KeywordFunnelPage /></Shell>} />
+            <Route path="/ai/anomalies" element={<Shell><AnomalyExplainerPage /></Shell>} />
+            <Route path="/ai/schema-generator" element={<Shell><SchemaGeneratorPage /></Shell>} />
             <Route path="/seo/dashboard" element={<Shell><SEODashboardPage /></Shell>} />
             <Route path="/scrape/dashboard" element={<Shell><ScrapeDashboard /></Shell>} />
             <Route path="/scrape" element={<Shell><ScrapeDashboard /></Shell>} />
