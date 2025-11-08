@@ -124,10 +124,37 @@ def require_manager_claims(
     return claims
 
 
+def require_owner_claims(
+    claims: Dict = Depends(get_claims)
+) -> Dict:
+    """
+    Require OWNER role only.
+
+    Args:
+        claims: JWT claims
+
+    Returns:
+        Claims if authorized
+
+    Raises:
+        HTTPException: If user doesn't have OWNER role
+    """
+    user_roles = claims.get("roles", [])
+
+    if Role.OWNER.value not in user_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions. Requires OWNER role.",
+        )
+
+    return claims
+
+
 __all__ = [
     "get_db",
     "get_token_from_header",
     "get_claims",
     "require_sales_claims",
     "require_manager_claims",
+    "require_owner_claims",
 ]

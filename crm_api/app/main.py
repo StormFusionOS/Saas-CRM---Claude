@@ -142,6 +142,14 @@ def create_app() -> FastAPI:
     from app.api.routes import scrape_sse
     app.include_router(scrape_sse.router, prefix=settings.API_PREFIX)
 
+    # Integrations router - Admin integration settings (AI Node, external services) (OWNER endpoints)
+    from app.api.routes import integrations
+    app.include_router(integrations.router, prefix=settings.API_PREFIX)
+
+    # AI Review router - Human-in-the-loop review workflow for AI changes (staff endpoints)
+    from app.api.routes import ai_review
+    app.include_router(ai_review.router, prefix=settings.API_PREFIX)
+
     app.include_router(webhooks.router)  # No prefix for webhooks
 
     # Health check endpoint

@@ -26,6 +26,8 @@ from app.schemas.scrape import (
     SerpSnapshotListResponse,
     SerpResultResponse,
     SerpResultListResponse,
+    CompetitorCreate,
+    CompetitorUpdate,
     CompetitorResponse,
     CompetitorListResponse,
     CompetitorPageResponse,

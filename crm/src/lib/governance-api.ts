@@ -117,7 +117,25 @@ export const governanceAPI = {
   // ============================================================================
 
   /**
-   * Get list of change log entries
+   * Get list of pending changes for review (paginated)
+   */
+  getPendingChanges: async (params?: {
+    module?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    changes: ChangeLog[];
+    total: number;
+    page: number;
+    limit: number;
+    has_more: boolean;
+  }> => {
+    const response = await apiClient.get('/ai/review/pending', { params });
+    return response.data;
+  },
+
+  /**
+   * Get list of change log entries (legacy endpoint)
    */
   getChangeLogs: async (params?: {
     status?: string;
@@ -130,19 +148,23 @@ export const governanceAPI = {
   },
 
   /**
-   * Get single change log entry by ID
+   * Get single change log entry by ID (review endpoint)
    */
   getChangeLog: async (changeId: string): Promise<ChangeLog> => {
-    const response = await apiClient.get(`/change-log/${changeId}`);
+    const response = await apiClient.get(`/ai/review/${changeId}`);
     return response.data;
   },
 
   /**
-   * Approve a change
+   * Approve a change and execute it
    */
-  approveChange: async (changeId: string, reason?: string): Promise<ChangeLog> => {
-    const response = await apiClient.put(`/change-log/${changeId}/review`, {
-      status: 'approved',
+  approveChange: async (changeId: string, reason?: string): Promise<{
+    change_id: string;
+    status: string;
+    message: string;
+    task_log_id?: string;
+  }> => {
+    const response = await apiClient.post(`/ai/review/${changeId}/approve`, {
       decision_reason: reason,
     });
     return response.data;
@@ -151,9 +173,13 @@ export const governanceAPI = {
   /**
    * Reject a change
    */
-  rejectChange: async (changeId: string, reason: string): Promise<ChangeLog> => {
-    const response = await apiClient.put(`/change-log/${changeId}/review`, {
-      status: 'rejected',
+  rejectChange: async (changeId: string, reason: string): Promise<{
+    change_id: string;
+    status: string;
+    message: string;
+    task_log_id?: string;
+  }> => {
+    const response = await apiClient.post(`/ai/review/${changeId}/reject`, {
       decision_reason: reason,
     });
     return response.data;

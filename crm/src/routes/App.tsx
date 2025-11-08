@@ -49,6 +49,7 @@ import FormulaTestingPage from '../pages/FormulaTestingPage';
 import CompliancePage from '../pages/CompliancePage';
 // AI Suite Pages
 import AIGovernancePage from '../pages/AIGovernancePage';
+import ReviewQueuePage from '../pages/ReviewQueuePage';
 import AIJobsPage from '../pages/AIJobsPage';
 import AIContextPage from '../pages/AIContextPage';
 import PromptRunnerPage from '../pages/PromptRunnerPage';
@@ -61,6 +62,7 @@ import BacklinkGapFinderPage from '../pages/BacklinkGapFinderPage';
 import KeywordFunnelPage from '../pages/KeywordFunnelPage';
 import AnomalyExplainerPage from '../pages/AnomalyExplainerPage';
 import SchemaGeneratorPage from '../pages/SchemaGeneratorPage';
+import AuthDebugPage from '../pages/AuthDebugPage';
 // Scrape Suite Pages
 import ScrapeDashboard from '../pages/scrape-suite/DashboardPage';
 import ScrapeKeywordsPage from '../pages/scrape-suite/KeywordsPage';
@@ -84,6 +86,7 @@ function App() {
             <Route path="/ai/dashboard" element={<Shell><AIDashboardPage /></Shell>} />
             <Route path="/ai" element={<Shell><AIDashboardPage /></Shell>} />
             <Route path="/ai/governance" element={<Shell><AIGovernancePage /></Shell>} />
+            <Route path="/ai/review-queue" element={<Shell><ReviewQueuePage /></Shell>} />
             <Route path="/ai/jobs" element={<Shell><AIJobsPage /></Shell>} />
             <Route path="/ai/prompt-runner" element={<Shell><PromptRunnerPage /></Shell>} />
             <Route path="/ai/context" element={<Shell><AIContextPage /></Shell>} />
@@ -128,6 +131,7 @@ function App() {
             <Route path="/client-portal" element={<Shell><ClientPortalPreview /></Shell>} />
             <Route path="/visual-check" element={<Shell><VisualCheckPage /></Shell>} />
             <Route path="/nav-demo" element={<NavDemoPage />} />
+            <Route path="/auth-debug" element={<Shell><AuthDebugPage /></Shell>} />
             <Route path="/" element={<Navigate to="/sales/dashboard" replace />} />
           </Routes>
           <Toaster />
