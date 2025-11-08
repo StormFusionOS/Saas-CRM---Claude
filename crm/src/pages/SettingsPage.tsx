@@ -8,6 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import AINodeCard from '../components/integrations/AINodeCard';
 
 const SettingsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -265,32 +266,44 @@ const SettingsPage: React.FC = () => {
       )}
 
       {activeTab === 'integrations' && (
-        <Card variant="glass" padding="lg">
-          <h2 className="text-xl font-semibold text-text-primary mb-4">Connected Integrations</h2>
-          <div className="space-y-4">
-            {[
-              { name: 'Google Calendar', status: 'connected', icon: '📅' },
-              { name: 'Slack', status: 'disconnected', icon: '💬' },
-              { name: 'Stripe', status: 'connected', icon: '💳' },
-              { name: 'Mailchimp', status: 'disconnected', icon: '📧' },
-            ].map((integration, i) => (
-              <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{integration.icon}</span>
-                  <div>
-                    <p className="font-medium text-text-primary">{integration.name}</p>
-                    <p className={`text-sm ${integration.status === 'connected' ? 'text-success' : 'text-text-muted'}`}>
-                      {integration.status}
-                    </p>
-                  </div>
-                </div>
-                <Button variant={integration.status === 'connected' ? 'secondary' : 'primary'} size="sm">
-                  {integration.status === 'connected' ? 'Disconnect' : 'Connect'}
-                </Button>
-              </div>
-            ))}
+        <div className="space-y-6">
+          {/* Page Header */}
+          <div>
+            <h2 className="text-2xl font-display font-bold text-text-primary">Integrations</h2>
+            <p className="text-sm text-text-muted mt-1">
+              Connect and configure external services for enhanced functionality
+            </p>
           </div>
-        </Card>
+
+          {/* AI Node Integration */}
+          <AINodeCard />
+
+          {/* Other Integrations (Placeholder) */}
+          <Card variant="glass" padding="lg">
+            <h3 className="text-lg font-semibold text-text-primary mb-4">Other Integrations</h3>
+            <div className="space-y-4">
+              {[
+                { name: 'Google Calendar', status: 'disconnected', icon: '📅', desc: 'Sync appointments and meetings' },
+                { name: 'Slack', status: 'disconnected', icon: '💬', desc: 'Team communication and notifications' },
+                { name: 'Stripe', status: 'disconnected', icon: '💳', desc: 'Payment processing' },
+                { name: 'Mailchimp', status: 'disconnected', icon: '📧', desc: 'Email marketing campaigns' },
+              ].map((integration, i) => (
+                <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{integration.icon}</span>
+                    <div>
+                      <p className="font-medium text-text-primary">{integration.name}</p>
+                      <p className="text-xs text-text-muted">{integration.desc}</p>
+                    </div>
+                  </div>
+                  <Button variant="secondary" size="sm" disabled>
+                    Coming Soon
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
       )}
     </div>
   );

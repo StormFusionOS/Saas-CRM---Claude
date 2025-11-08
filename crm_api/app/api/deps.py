@@ -11,8 +11,9 @@ CRM API Dependencies.
 Dependency injection for database sessions, authentication, and authorization.
 """
 
-from typing import Dict, Generator
+from typing import Dict, Generator, Optional
 from fastapi import Depends, Header, HTTPException, status
+from sqlalchemy.orm import Session
 from app.db import get_db, InMemoryDB
 from app.core.security import verify_token, Role
 
@@ -150,6 +151,59 @@ def require_owner_claims(
     return claims
 
 
+# ============================================================================
+# Integration Settings Dependencies
+# ============================================================================
+
+
+def get_ai_node_config(
+    db: Session = Depends(get_db)
+) -> Optional[object]:
+    """
+    Get AI Node integration configuration as a dependency.
+
+    This allows other endpoints to easily access AI Node settings without
+    manually querying the database.
+
+    Usage:
+        @router.post("/some-endpoint")
+        def my_endpoint(config = Depends(get_ai_node_config)):
+            if not config or not config.base_url:
+                raise HTTPException(400, "AI Node not configured")
+
+            bearer_token = config.get_secret()
+            # ... use config
+
+    Args:
+        db: Database session
+
+    Returns:
+        IntegrationSetting instance for ai_node namespace, or None if not configured
+
+    Example:
+        ```python
+        def trigger_ai_job(
+            config: IntegrationSetting = Depends(get_ai_node_config),
+            db: Session = Depends(get_db)
+        ):
+            if not config:
+                raise HTTPException(400, "AI Node not configured")
+
+            # Access config
+            api_url = config.base_url
+            token = config.get_secret()
+            review_required = config.review_mode
+        ```
+    """
+    from app.models.integrations import IntegrationSetting
+
+    config = db.query(IntegrationSetting).filter(
+        IntegrationSetting.namespace == "ai_node"
+    ).first()
+
+    return config
+
+
 __all__ = [
     "get_db",
     "get_token_from_header",
@@ -157,4 +211,5 @@ __all__ = [
     "require_sales_claims",
     "require_manager_claims",
     "require_owner_claims",
+    "get_ai_node_config",
 ]
